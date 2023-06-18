@@ -5,21 +5,10 @@
 	export let jsonData;
 
 	let jsonObject;
-	let isValid;
-
-	function validate(thing) {
-		try {
-			jsonObject = JSON.parse(thing);
-		} catch (e) {
-			return false;
-		}
-		return true;
-	}
-
-	$: isValid = validate(jsonData);
+	$: jsonObject = THRIFT.VALIDATE_THRIFT_OBJ(jsonData);
 </script>
 
-{#if isValid}
+{#if jsonObject !== 'undefined'}
 	<p class="bg-green-200">
 		Valid JSON object!
 	</p>

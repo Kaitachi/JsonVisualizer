@@ -27,5 +27,29 @@ export const THRIFT = {
 		"rec": { name: "record", is_complex: true },
 		"lst": { name: "list", is_complex: true },
 		"map": { name: "map", is_complex: true }
+	},
+
+	VALIDATE_THRIFT_OBJ: function (input) {
+		let response;
+
+		try {
+			let tmp = JSON.parse(input);
+
+			if (!Array.isArray(tmp)) {
+				throw new Error("Input data is not an array!");
+			}
+
+			if (tmp.length !== 5) {
+				throw new Error("Input array does not contain expected five elements!");
+			}
+
+			console.info("Valid JSON string!");
+
+			response = tmp;
+		} catch (e) {
+			console.error(e);
+		}
+
+		return response;
 	}
 }
