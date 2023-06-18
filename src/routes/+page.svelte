@@ -1,5 +1,5 @@
 <script>
-	import ThriftJsonObject from '$components/json-visualizer/Thrift/JsonObject.svelte';
+	import ThriftObjectDisplay from '$components/json-visualizer/Thrift/ThriftObjectDisplay.svelte';
 
 	let userInput = '';
 </script>
@@ -20,7 +20,7 @@
 
 	<p>
 	{#if userInput}
-		<ThriftJsonObject jsonData={userInput} />
+		<ThriftObjectDisplay json={userInput} />
 	{/if}
 	</p>
 </main>
