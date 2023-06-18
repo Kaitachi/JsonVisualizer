@@ -1,8 +1,24 @@
 <script>
-	import Table from '$components/json-visualizer/Table.svelte';
+	import ThriftJsonObject from '$components/json-visualizer/Thrift/JsonObject.svelte';
+
+	let userInput = '';
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<main>
+	<h1 class="text-2xl font-bold text-center text-gray-800 md:text-3xl">Thrift Object Visualizer</h1>
 
-<Table />
+	<form class="my-6">
+		<div class="flex flex-col text-sm mb-2">
+			<label for="thriftObject" class="font-bold mb-2 text-gray-800">Input Object</label>
+			<textarea bind:value={userInput} name="thriftObject"
+				class="appearance-none shadow-sm border border-gray-200 p-2 focus:outline-none focus:border-gray-500 rounded-lg"
+			></textarea>
+		</div>
+	</form>
+
+	<hr />
+
+	<p>
+		<ThriftJsonObject jsonData={userInput} />
+	</p>
+</main>
