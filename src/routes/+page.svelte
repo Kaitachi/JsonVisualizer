@@ -19,6 +19,8 @@
 	<hr />
 
 	<p>
+	{#if userInput}
 		<ThriftJsonObject jsonData={userInput} />
+	{/if}
 	</p>
 </main>

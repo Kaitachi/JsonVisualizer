@@ -8,7 +8,7 @@
 	$: jsonObject = THRIFT.VALIDATE_THRIFT_OBJ(jsonData);
 </script>
 
-{#if jsonObject !== 'undefined'}
+{#if jsonObject !== undefined}
 	<p class="bg-green-200">
 		Valid JSON object!
 	</p>
