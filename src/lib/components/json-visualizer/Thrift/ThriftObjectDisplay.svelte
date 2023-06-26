@@ -4,6 +4,7 @@
 
 	export let json;
 
+	let jsonPath = "$[4]";
 	let jsonObject;
 	$: jsonObject = THRIFT.VALIDATE_THRIFT_OBJ(json);
 </script>
@@ -38,7 +39,7 @@
 				</dd>
 			</dl>
 		</caption>
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} />
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath}/>
 	</div>
 {:else}
 	<p class="bg-red-200">

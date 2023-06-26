@@ -2,10 +2,11 @@
 	import { THRIFT } from "./Types.js";
 
 	export let obj;
+	export let jsonPath;
 	export let type = "rec";
 </script>
 
-{#if type === "rec" || type === "lst"}
+{#if ["rec", "lst", "map"].includes(type)}
 	<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
 		<thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
 			<tr>
@@ -16,6 +17,9 @@
 							<em>({THRIFT.DATA_TYPES[Object.keys(column[1])[0]].name})</em>
 						</th>
 					{/each}
+				{:else if type === "map"}
+					<th scope="col" class="px-6 py-3">Key</th>
+					<th scope="col" class="px-6 py-3">Value</th>
 				{:else}
 					<th scope="col" class="px-6 py-3">
 						index
@@ -26,35 +30,63 @@
 				{/if}
 			</tr>
 		</thead>
-		<tbody>
+		<tbody data-obj="{JSON.stringify(obj)}">
 			{#if type === "rec"}
 				<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
 					{#each Object.entries(obj) as field}
 						{@const entry = Object.entries(field[1])[0]}
 						{@const key = entry[0]}
 						{@const value = entry[1]}
-						<td class="px-6 py-4">
+						{@const subpath = `${jsonPath}[${field[0]}][${key}]`}
+						<td class="px-6 py-4"
+							data-type="{type}"
+							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[key].is_complex}
-								<svelte:self obj={value} type={key} />
+								<svelte:self obj={value} jsonPath={subpath} type={key} />
 							{:else}
 								{value}
 							{/if}
 						</td>
 					{/each}
 				</tr>
+			{:else if type === "map"}
+				{#each Object.entries(obj[3]) as row}
+					{@const subpath = `${jsonPath}[3][${row[0]}]` }
+					{@const key = row[0]}
+					{@const value = row[1]}
+					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+						<th class="px-6 py-4">
+							{key}
+						<td class="px-6 py-4"
+							data-type="{type}"
+							data-json-path="{subpath}">
+							{#if THRIFT.DATA_TYPES[obj[1]].is_complex}
+								<svelte:self obj={value} jsonPath={subpath} type={key} />
+							{:else}
+								{value}
+							{/if}
+						</td>
+					</tr>
+				{/each}
 			{:else}
 				{#each obj.slice(2) as item, i}
+					{@const sub = `${jsonPath}`}
 					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
 						<th class="px-6 py-4">
 							{i}
 						</th>
 						{#each Object.entries(item) as field}
+							{@const subpath = `${sub}[${i+2}]`}
 							{@const entry = field}
 							{@const key = entry[0]}
 							{@const value = entry[1]}
-							<td class="px-6 py-4">
-								{#if THRIFT.DATA_TYPES[key].is_complex}
-									<svelte:self obj={value} type={key} />
+							<td class="px-6 py-4"
+								data-type="{type}"
+								data-key="{key}"
+								data-thrift-type="{obj[0]}"
+								data-json-path="{subpath}">
+								{#if THRIFT.DATA_TYPES[obj[0]].is_complex}
+									<svelte:self obj={value} jsonPath={subpath} type={obj[0]} />
 								{:else}
 									{value}
 								{/if}
