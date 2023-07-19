@@ -4,6 +4,12 @@
 	export let obj;
 	export let jsonPath;
 	export let type = "rec";
+
+	console.log("\n\n\n");
+	console.log("vvv obj vvv");
+	console.log(obj);
+	console.log("^^^");
+	console.log({ type, jsonPath });
 </script>
 
 {#if ["rec", "lst", "map"].includes(type)}
@@ -12,7 +18,10 @@
 			<tr>
 				{#if type === "rec"}
 					{#each Object.entries(obj) as column}
-						<th scope="col" class="px-6 py-3">
+						<th scope="col"
+							class="px-6 py-3"
+							data-type="{Object.keys(column[1])[0]}"
+							data-json-path="{`${jsonPath}[${column[0]}]`}">
 							{column[0]}
 							<em>({THRIFT.DATA_TYPES[Object.keys(column[1])[0]].name})</em>
 						</th>
@@ -20,12 +29,19 @@
 				{:else if type === "map"}
 					<th scope="col" class="px-6 py-3">Key</th>
 					<th scope="col" class="px-6 py-3">Value</th>
-				{:else}
+				{:else if type === "lst"}
 					<th scope="col" class="px-6 py-3">
 						index
 					</th>
-					<th scope="col" class="px-6 py-3">
+					<th scope="col"
+						class="px-6 py-3"
+						data-type="{obj[0]}"
+						data-json-path="{jsonPath}">
 						<em>({THRIFT.DATA_TYPES[obj[0]].name})</em>
+					</th>
+				{:else}
+					<th scope="col" class="px-6 py-3">
+						UNDEFINED {type}
 					</th>
 				{/if}
 			</tr>
@@ -68,7 +84,7 @@
 						</td>
 					</tr>
 				{/each}
-			{:else}
+			{:else if type === "lst"}
 				{#each obj.slice(2) as item, i}
 					{@const sub = `${jsonPath}`}
 					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
@@ -86,7 +102,7 @@
 								data-thrift-type="{obj[0]}"
 								data-json-path="{subpath}">
 								{#if THRIFT.DATA_TYPES[obj[0]].is_complex}
-									<svelte:self obj={value} jsonPath={subpath} type={obj[0]} />
+									<svelte:self obj={value} jsonPath={subpath} type={key} />
 								{:else}
 									{value}
 								{/if}
@@ -94,6 +110,9 @@
 						{/each}
 					</tr>
 				{/each}
+			{:else}
+				<p>OBJECT FIELD NOT IMPLEMENTED</p>
+				<p>{type}</p>
 			{/if}
 		</tbody>
 	</table>
