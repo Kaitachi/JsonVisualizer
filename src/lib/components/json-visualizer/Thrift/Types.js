@@ -1,4 +1,5 @@
 export const THRIFT = {
+	/** @type {Object.<string, number>} */
 	FIELDS: {
 		VERSION: 0,
 		ENDPOINT: 1,
@@ -7,11 +8,13 @@ export const THRIFT = {
 		PAYLOAD: 4
 	},
 
+	/** @type {Object.<number, string>} */
 	TRANSACTION_TYPES: {
 		1: "Request",
 		2: "Response"
 	},
 
+	/** @type {function(number): string} */
 	PAYLOAD_TYPES: (payload_type) => {
 		switch (payload_type) {
 			case 1: return 'Regular Object';
@@ -19,6 +22,13 @@ export const THRIFT = {
 		}
 	},
 
+	/**
+	* @typedef ThriftDataType
+	* @property {string} name
+	* @property {boolean} is_complex
+	*/
+
+	/** @type {Object.<string, ThriftDataType>} */
 	DATA_TYPES: {
 		"tf" : { name: "boolean", is_complex: false },
 		"i32": { name: "int", is_complex: false },
@@ -30,6 +40,7 @@ export const THRIFT = {
 		"set": { name: "set", is_complex: true }
 	},
 
+	/** @type {function(string): any} */
 	VALIDATE_THRIFT_OBJ: function (input) {
 		let response;
 

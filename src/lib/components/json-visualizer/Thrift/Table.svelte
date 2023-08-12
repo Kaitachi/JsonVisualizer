@@ -1,8 +1,13 @@
 <script>
 	import { THRIFT } from "./Types.js";
 
+	/** @type {any} */
 	export let obj;
+
+	/** @type {string} */
 	export let jsonPath;
+
+	/** @type {string} */
 	export let type = "rec";
 </script>
 
