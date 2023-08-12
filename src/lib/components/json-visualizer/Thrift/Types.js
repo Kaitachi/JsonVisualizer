@@ -26,7 +26,8 @@ export const THRIFT = {
 		"str": { name: "string", is_complex: false },
 		"rec": { name: "record", is_complex: true },
 		"lst": { name: "list", is_complex: true },
-		"map": { name: "map", is_complex: true }
+		"map": { name: "map", is_complex: true },
+		"set": { name: "set", is_complex: true }
 	},
 
 	VALIDATE_THRIFT_OBJ: function (input) {
