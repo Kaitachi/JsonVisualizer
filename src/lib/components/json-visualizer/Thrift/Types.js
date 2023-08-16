@@ -25,20 +25,21 @@ export const THRIFT = {
 	/**
 	* @typedef ThriftDataType
 	* @property {string} name
-	* @property {boolean} is_complex
+	* @property {boolean} is_container
 	*/
 
 	/** @type {Object.<string, ThriftDataType>} */
 	DATA_TYPES: {
-		"tf" : { name: "boolean", is_complex: false },
-		"i32": { name: "int", is_complex: false },
-		"i64": { name: "long", is_complex: false },
-		"dbl": { name: "double", is_complex: false },
-		"str": { name: "string", is_complex: false },
-		"rec": { name: "record", is_complex: true },
-		"lst": { name: "list", is_complex: true },
-		"map": { name: "map", is_complex: true },
-		"set": { name: "set", is_complex: true }
+		"tf" : { name: "boolean", is_container: false },
+		"i16": { name: "short", is_container: false },
+		"i32": { name: "int", is_container: false },
+		"i64": { name: "long", is_container: false },
+		"dbl": { name: "double", is_container: false },
+		"str": { name: "string", is_container: false },
+		"rec": { name: "record", is_container: true },
+		"lst": { name: "list", is_container: true },
+		"map": { name: "map", is_container: true },
+		"set": { name: "set", is_container: true }
 	},
 
 	/** @type {function(string): any} */
