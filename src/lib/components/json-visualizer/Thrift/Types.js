@@ -1,15 +1,21 @@
+/**
+ * Thrift Message that can be transmitted across services
+ * @typedef {Array<[number, string, number, number, Object]>} ThriftMessage
+ */
+
+
 export const THRIFT = {
 	/** @type {Object.<string, number>} */
 	FIELDS: {
 		VERSION: 0,
 		ENDPOINT: 1,
-		TRANSACTION: 2,
+		MESSAGE: 2,
 		PAYLOAD_TYPE: 3,
 		PAYLOAD: 4
 	},
 
 	/** @type {Object.<number, string>} */
-	TRANSACTION_TYPES: {
+	MESSAGE_TYPES: {
 		1: "Request",
 		2: "Response"
 	},
@@ -42,28 +48,51 @@ export const THRIFT = {
 		"set": { name: "set", is_container: true }
 	},
 
-	/** @type {function(string): any} */
-	VALIDATE_THRIFT_OBJ: function (input) {
-		let response;
+	/** @type {function(string): ThriftMessage} */
+	VALIDATE_THRIFT_MESSAGE: function (input) {
+		/** @type {ThriftMessage} */
+		let message = [];
 
 		try {
-			let tmp = JSON.parse(input);
+			let msg = JSON.parse(input);
 
-			if (!Array.isArray(tmp)) {
+			if (!Array.isArray(msg)) {
 				throw new Error("Input data is not an array!");
 			}
 
-			if (tmp.length !== 5) {
+			if (msg.length !== 5) {
 				throw new Error("Input array does not contain expected five elements!");
+			}
+
+			if (!Number.isInteger(msg[0])) {
+				throw new Error("Input array element [0] is not an Integer!");
+			}
+
+			if (typeof msg[1] !== "string") {
+				throw new Error("Input array element [1] is not a String!");
+			}
+
+			if (!Number.isInteger(msg[2])) {
+				throw new Error("Input array element [2] is not an Integer!");
+			}
+
+			if (!Number.isInteger(msg[3])) {
+				throw new Error("Input array element [3] is not an Integer!");
+			}
+
+			if (typeof msg[4] !== "object") {
+				throw new Error("Input array element [4] is not an Object!");
 			}
 
 			console.info("Valid JSON string!");
 
-			response = tmp;
+			message = msg;
 		} catch (e) {
 			console.error(e);
+			throw e;
 		}
 
-		return response;
+		return message;
 	}
 }
+

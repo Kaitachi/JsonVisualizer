@@ -37,11 +37,14 @@
 					{@const subpath = `${jsonPath}...`}
 
 					<th scope="col"
-						class="px-6 py-3">
+						class="px-6 py-3"
+						data-type="{map_key_type}">
 						Key <em>({THRIFT.DATA_TYPES[map_key_type].name})</em>
 					</th>
 					<th scope="col"
-						class="px-6 py-3">
+						class="px-6 py-3"
+						data-type="{map_value_type}"
+						data-json-path="{subpath}">
 						Value <em>({THRIFT.DATA_TYPES[map_value_type].name})
 					</th>
 				{:else if type === "lst"}
@@ -59,10 +62,13 @@
 						<em>({THRIFT.DATA_TYPES[obj[0]].name})</em>
 					</th>
 				{:else if type === "set"}
+					{@const set_type = obj[0]}
 					{@const subpath = `${jsonPath}...`}
 
 					<th scope="col"
-						class="px-6 py-3">
+						class="px-6 py-3"
+						data-type="{set_type}"
+						data-json-path="{subpath}">
 						Elements <em>({THRIFT.DATA_TYPES[obj[0]].name})</em>
 					</th>
 				{:else}
