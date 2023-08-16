@@ -33,6 +33,7 @@ export const THRIFT = {
 		"tf" : { name: "boolean", is_complex: false },
 		"i32": { name: "int", is_complex: false },
 		"i64": { name: "long", is_complex: false },
+		"dbl": { name: "double", is_complex: false },
 		"str": { name: "string", is_complex: false },
 		"rec": { name: "record", is_complex: true },
 		"lst": { name: "list", is_complex: true },
