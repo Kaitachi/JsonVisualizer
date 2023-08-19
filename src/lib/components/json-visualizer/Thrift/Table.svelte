@@ -67,6 +67,10 @@
 					{@const subpath = `${jsonPath}...`}
 
 					<th scope="col"
+						class="px-6 py-3">
+						Index
+					</th>
+					<th scope="col"
 						class="px-6 py-3"
 						data-type="{set_type}"
 						data-json-path="{subpath}">
@@ -113,6 +117,7 @@
 					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
 						<th class="px-6 py-4">
 							{key}
+						</th>
 						<td class="px-6 py-4"
 							data-type="{type}"
 							data-json-path="{subpath}">
@@ -159,6 +164,9 @@
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-gray-900 dark:border-gray-700 dark:bg-opacity-50">
+						<th class="px-6 py-4">
+							{i}
+						</th>
 						<td class="px-6 py-4"
 							data-key="{i}"
 							data-type="{set_type}"
