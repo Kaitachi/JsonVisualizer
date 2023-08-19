@@ -12,4 +12,22 @@
 		style="transition: background-color: 0.3s;">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
+	<script>
+		// Handle color scheme to be used
+		function setColorScheme() {
+			// Does User Agent prefers dark scheme?
+			let prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+			// Fetch theme from homepage theme
+			let stackColorScheme = localStorage.StackColorScheme ?? "auto";
+			
+			if (stackColorScheme === "dark" || (stackColorScheme === "auto" && prefersDarkScheme)) {
+				document.documentElement.dataset.colorScheme = "dark";
+			} else {
+				document.documentElement.dataset.colorScheme = "light";
+			}
+		}
+
+		setColorScheme();
+	</script>
 </html>
