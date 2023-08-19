@@ -14,7 +14,7 @@
 
 {#if ["rec", "lst", "map", "set"].includes(type)}
 	<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-		<thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+		<thead class="text-xs text-gray-200 bg-gray-800 dark:bg-neutral-700 dark:text-gray-100">
 			<tr>
 				{#if type === "rec"}
 					{#each Object.entries(obj) as column}
@@ -81,7 +81,7 @@
 		</thead>
 		<tbody data-obj="{JSON.stringify(obj)}">
 			{#if type === "rec"}
-				<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+				<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
 					{#each Object.entries(obj) as field}
 						{@const entry = Object.entries(field[1])[0]}
 						{@const cell_type = entry[0]}
@@ -109,7 +109,7 @@
 					{@const value = row[1]}
 					{@const subpath = `${jsonPath}[3][${key}]` }
 
-					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
 						<th class="px-6 py-4">
 							{key}
 						<td class="px-6 py-4"
@@ -133,7 +133,7 @@
 					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
 						<th class="px-6 py-4">
 							{i}
 						</th>
@@ -156,7 +156,7 @@
 				{#each obj.slice(2) as item, i}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-gray-900 dark:border-gray-700 dark:bg-opacity-50">
 						<td class="px-6 py-4"
 							data-key="{i}"
 							data-type="{set_type}"
