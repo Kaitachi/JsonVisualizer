@@ -128,6 +128,9 @@
 				{@const lst_count = obj[1]}
 
 				{#each obj.slice(2) as item, i}
+					{@const row = Object.entries(item)}
+					{@const key = row[0][0]}
+					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
@@ -141,7 +144,7 @@
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
 								<svelte:self obj={item} jsonPath={subpath} type={lst_type} />
 							{:else}
-								{item}
+								{value}
 							{/if}
 						</td>
 					</tr>
