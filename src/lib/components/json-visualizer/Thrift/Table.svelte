@@ -1,5 +1,6 @@
 <script>
 	import { THRIFT } from "./Types.js";
+	import Cell from "./Cell.svelte";
 
 	/** @type {any} */
 	export let obj;
@@ -94,19 +95,19 @@
 							{#if THRIFT.DATA_TYPES[cell_type].is_container}
 								<svelte:self obj={value} jsonPath={subpath} type={cell_type} />
 							{:else}
-								{value}
+								<Cell entry={entry} />
 							{/if}
 						</td>
 					{/each}
 				</tr>
 			{:else if type === "map"}
 				{@const map_key_type = obj[0]}
-				{@const map_value_type = obj[1]}
+				{@const map_entry_type = obj[1]}
 				{@const map_count = obj[2]}
 
 				{#each Object.entries(obj[3]) as row}
 					{@const key = row[0]}
-					{@const value = row[1]}
+					{@const entry = row[1]}
 					{@const subpath = `${jsonPath}[3][${key}]` }
 
 					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
@@ -116,9 +117,9 @@
 							data-type="{type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[obj[1]].is_container}
-								<svelte:self obj={value} jsonPath={subpath} type={map_value_type} />
+								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} />
 							{:else}
-								{value}
+								<Cell entry={entry} />
 							{/if}
 						</td>
 					</tr>
@@ -127,8 +128,8 @@
 				{@const lst_type = obj[0]}
 				{@const lst_count = obj[1]}
 
-				{#each obj.slice(2) as item, i}
-					{@const row = Object.entries(item)}
+				{#each obj.slice(2) as entry, i}
+					{@const row = Object.entries(entry)}
 					{@const key = row[0][0]}
 					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
@@ -142,8 +143,9 @@
 							data-type="{lst_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
-								<svelte:self obj={item} jsonPath={subpath} type={lst_type} />
+								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} />
 							{:else}
+								<Cell entry={entry} />
 								{value}
 							{/if}
 						</td>
@@ -153,7 +155,7 @@
 				{@const set_type = obj[0]}
 				{@const set_count = obj[1]}
 
-				{#each obj.slice(2) as item, i}
+				{#each obj.slice(2) as entry, i}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-gray-900 dark:border-gray-700 dark:bg-opacity-50">
@@ -162,9 +164,9 @@
 							data-type="{set_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[set_type].is_container}
-								<svelte:self obj={item} jsonPath={subpath} type={set_type} />
+								<svelte:self obj={entry} jsonPath={subpath} type={set_type} />
 							{:else}
-								{item}
+								<Cell entry={entry} />
 							{/if}
 						</td>
 					</tr>
