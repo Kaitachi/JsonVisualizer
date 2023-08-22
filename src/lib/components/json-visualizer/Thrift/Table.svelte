@@ -1,6 +1,5 @@
 <script>
 	import { THRIFT } from "./Types.js";
-	import Cell from "./Cell.svelte";
 
 	/** @type {any} */
 	export let obj;
@@ -99,7 +98,7 @@
 							{#if THRIFT.DATA_TYPES[cell_type].is_container}
 								<svelte:self obj={value} jsonPath={subpath} type={cell_type} />
 							{:else}
-								<Cell entry={entry} />
+								{value}
 							{/if}
 						</td>
 					{/each}
@@ -124,7 +123,7 @@
 							{#if THRIFT.DATA_TYPES[obj[1]].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} />
 							{:else}
-								<Cell entry={entry} />
+								{entry}
 							{/if}
 						</td>
 					</tr>
@@ -150,7 +149,6 @@
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} />
 							{:else}
-								<Cell entry={entry} />
 								{value}
 							{/if}
 						</td>
@@ -161,9 +159,12 @@
 				{@const set_count = obj[1]}
 
 				{#each obj.slice(2) as entry, i}
+					{@const row = Object.entries(entry)}
+					{@const key = row[0][0]}
+					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-gray-900 dark:border-gray-700 dark:bg-opacity-50">
+					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
 						<th class="px-6 py-4">
 							{i}
 						</th>
@@ -174,7 +175,7 @@
 							{#if THRIFT.DATA_TYPES[set_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={set_type} />
 							{:else}
-								<Cell entry={entry} />
+								{value}
 							{/if}
 						</td>
 					</tr>
