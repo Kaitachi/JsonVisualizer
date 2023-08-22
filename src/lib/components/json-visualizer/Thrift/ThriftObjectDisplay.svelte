@@ -38,7 +38,7 @@
 	<div class="mx-auto py-4">
 		<details class="bg-jimmy-lite-100 dark:bg-jimmy-night-700 shadow-lg p-6 rounded-lg">
 			<summary class="text-sm leading-6 text-slate-900 dark:text-gray-100 font-semibold select-none cursor-pointer">
-				Metadata
+				Thrift Metadata
 			</summary>
 			<div class="mt-3 text-sm leading-6 text-slate-600 dark:text-gray-100">
 				<dl class="px-4">
