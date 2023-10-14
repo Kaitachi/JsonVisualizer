@@ -86,7 +86,7 @@ import { THRIFT } from "./Types.js";
 		</thead>
 		<tbody data-obj="{JSON.stringify(obj)}">
 			{#if type === "rec"}
-				<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
+				<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 					{#each Object.entries(obj) as field}
 						{@const entry = Object.entries(field[1])[0]}
 						{@const cell_type = entry[0]}
@@ -114,7 +114,7 @@ import { THRIFT } from "./Types.js";
 					{@const entry = row[1]}
 					{@const subpath = `${jsonPath}[3][${key}]` }
 
-					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
+					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
 							{key}
 						</th>
@@ -139,7 +139,7 @@ import { THRIFT } from "./Types.js";
 					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
+					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
 							{i}
 						</th>
@@ -165,7 +165,7 @@ import { THRIFT } from "./Types.js";
 					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					<tr class="bg-slate-300 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-50">
+					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
 							{i}
 						</th>
