@@ -1,5 +1,6 @@
 <script>
-	import { THRIFT } from "./Types.js";
+	import Cell from "./Cell.svelte";
+import { THRIFT } from "./Types.js";
 
 	/** @type {any} */
 	export let obj;
@@ -13,7 +14,7 @@
 
 
 {#if ["rec", "lst", "map", "set"].includes(type)}
-	<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+	<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-separate">
 		<thead class="text-xs text-gray-200 bg-gray-800 dark:bg-neutral-700 dark:text-gray-100">
 			<tr>
 				{#if type === "rec"}
@@ -98,7 +99,7 @@
 							{#if THRIFT.DATA_TYPES[cell_type].is_container}
 								<svelte:self obj={value} jsonPath={subpath} type={cell_type} />
 							{:else}
-								{value}
+								<Cell entry={entry} />
 							{/if}
 						</td>
 					{/each}
@@ -123,7 +124,7 @@
 							{#if THRIFT.DATA_TYPES[obj[1]].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} />
 							{:else}
-								{entry}
+								<Cell entry={row} />
 							{/if}
 						</td>
 					</tr>
@@ -149,7 +150,7 @@
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} />
 							{:else}
-								{value}
+								<Cell entry={row[0]} />
 							{/if}
 						</td>
 					</tr>
@@ -175,7 +176,7 @@
 							{#if THRIFT.DATA_TYPES[set_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={set_type} />
 							{:else}
-								{value}
+								<Cell entry={row[0]} />
 							{/if}
 						</td>
 					</tr>

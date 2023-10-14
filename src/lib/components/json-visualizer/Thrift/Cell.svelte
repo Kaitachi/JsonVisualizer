@@ -23,8 +23,8 @@
 </script>
 
 {#if helpers.length == 1}
-	<span title={helpers[0]}>{value}</span>
+	<span title={helpers[0]} data-type="{type}" data-value="{value}">{value}</span>
 {:else}
-	{value}
+	<span data-type="{type}" data-value="{value}">{value}</span>
 {/if}
 
