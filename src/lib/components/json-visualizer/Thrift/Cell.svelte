@@ -1,7 +1,16 @@
 <script>
+	import { fieldUpdates } from "../../../../stores";
+	import InPlaceEdit from "./InPlaceEdit.svelte";
+
 
 	/** @type {[string, any]} */
 	export let entry;
+
+	/** @type {string} */
+	export let path;
+
+	/** @type {boolean} */
+	export let isEditMode = false;
 
 	/** @type {string} */
 	let type = entry[0];
@@ -20,11 +29,30 @@
 			helpers.push(new Date(timestamp).toUTCString());
 		}
 	}
+
+	let props = {
+		"title": helpers[0]
+	};
+
+	function submit(field) {
+		return ({detail: newValue}) => {
+			$fieldUpdates.push({
+				path: field,
+				type: type,
+				value: newValue
+			});
+			$fieldUpdates = $fieldUpdates;
+
+			console.log(`updating ${field}: "${newValue}".`);
+		}
+	}
 </script>
 
-{#if helpers.length == 1}
-	<span title={helpers[0]} data-type="{type}" data-value="{value}">{value}</span>
-{:else}
-	<span data-type="{type}" data-value="{value}">{value}</span>
+{#if false}
+	<span title={helpers[0]} data-type={type} data-value={value} data-path={path}>{value}</span>
+{:else if false}
+	<input type="text" bind:value={value} data-path={path} />
 {/if}
+
+<InPlaceEdit bind:value={value} on:submit={submit(`${path}`)} props={props} />
 

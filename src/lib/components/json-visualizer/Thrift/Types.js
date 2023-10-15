@@ -32,20 +32,21 @@ export const THRIFT = {
 	* @typedef ThriftDataType
 	* @property {string} name
 	* @property {boolean} is_container
+	* @property {boolean} is_unquoted
 	*/
 
 	/** @type {Object.<string, ThriftDataType>} */
 	DATA_TYPES: {
-		"tf" : { name: "boolean", is_container: false },
-		"i16": { name: "short", is_container: false },
-		"i32": { name: "int", is_container: false },
-		"i64": { name: "long", is_container: false },
-		"dbl": { name: "double", is_container: false },
-		"str": { name: "string", is_container: false },
-		"rec": { name: "record", is_container: true },
-		"lst": { name: "list", is_container: true },
-		"map": { name: "map", is_container: true },
-		"set": { name: "set", is_container: true }
+		"tf" : { name: "boolean", is_container: false, is_unquoted: true },
+		"i16": { name: "short", is_container: false, is_unquoted: true },
+		"i32": { name: "int", is_container: false, is_unquoted: true },
+		"i64": { name: "long", is_container: false, is_unquoted: true },
+		"dbl": { name: "double", is_container: false, is_unquoted: true },
+		"str": { name: "string", is_container: false, is_unquoted: false },
+		"rec": { name: "record", is_container: true, is_unquoted: true },
+		"lst": { name: "list", is_container: true, is_unquoted: true },
+		"map": { name: "map", is_container: true, is_unquoted: true },
+		"set": { name: "set", is_container: true, is_unquoted: true }
 	},
 
 	/** @type {function(string): ThriftMessage} */

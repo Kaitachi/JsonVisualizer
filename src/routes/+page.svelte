@@ -1,7 +1,36 @@
 <script>
 	import ThriftObjectDisplay from '$components/json-visualizer/Thrift/ThriftObjectDisplay.svelte';
-
+	import { THRIFT } from '$components/json-visualizer/Thrift/Types';
+	import { fieldUpdates } from '../stores';
+	
 	let userInput = '';
+
+	$fieldUpdates = [];
+
+	fieldUpdates.subscribe((currentValue) => {
+		if (currentValue && currentValue.length) {
+			console.log(`> Received new fieldUpdate entry... ${JSON.stringify(currentValue)}`);
+
+			let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE(userInput);
+
+			currentValue.forEach((item) => {
+				console.log(`>> Applying entry: ${item.path} = ${item.value} (${item.type})`);
+				
+				if (!THRIFT.DATA_TYPES[item.type] || !THRIFT.DATA_TYPES[item.type].is_unquoted) {
+					item.value = `"${item.value}"`;
+				}
+
+				let replace = `${item.path.replace("$", "inputObject")} = ${item.value}`;
+				console.log(`>> replace: ${replace}`);
+				eval(replace);
+
+				userInput = JSON.stringify(inputObject);
+				console.log(`>> result: ${JSON.stringify(inputObject)}`);
+			});
+
+			$fieldUpdates = [];
+		}
+	})
 </script>
 
 <main>
@@ -15,6 +44,12 @@
 			></textarea>
 		</div>
 	</form>
+
+	<hr />
+	
+	{#each $fieldUpdates as update }
+		{update.path} - {update.value}<br />
+	{/each}
 
 	<hr />
 
