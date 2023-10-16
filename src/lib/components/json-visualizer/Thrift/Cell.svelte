@@ -9,9 +9,6 @@
 	/** @type {string} */
 	export let path;
 
-	/** @type {boolean} */
-	export let isEditMode = false;
-
 	/** @type {string} */
 	let type = entry[0];
 

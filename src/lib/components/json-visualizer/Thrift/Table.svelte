@@ -137,8 +137,9 @@ import { THRIFT } from "./Types.js";
 					{@const row = Object.entries(entry)}
 					{@const key = row[0][0]}
 					{@const value = row[0][1]}
-					{@const subpath = `${jsonPath}[${i+2}]['${lst_type}']`}
+					{@const subpath = `${jsonPath}[${i+2}]`}
 
+					{@debug entry}
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
 							{i}
@@ -150,7 +151,7 @@ import { THRIFT } from "./Types.js";
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} />
 							{:else}
-								<Cell entry={row[0]} path={subpath} />
+								<Cell entry={[lst_type, entry]} path={subpath} />
 							{/if}
 						</td>
 					</tr>
@@ -161,9 +162,7 @@ import { THRIFT } from "./Types.js";
 
 				{#each obj.slice(2) as entry, i}
 					{@const row = Object.entries(entry)}
-					{@const key = row[0][0]}
-					{@const value = row[0][1]}
-					{@const subpath = `${jsonPath}[${i+2}]['${set_type}']`}
+					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
@@ -176,7 +175,7 @@ import { THRIFT } from "./Types.js";
 							{#if THRIFT.DATA_TYPES[set_type].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={set_type} />
 							{:else}
-								<Cell entry={row[0]} path={subpath} />
+								<Cell entry={[set_type, entry]} path={subpath} />
 							{/if}
 						</td>
 					</tr>
