@@ -124,7 +124,7 @@ import { THRIFT } from "./Types.js";
 							{#if THRIFT.DATA_TYPES[obj[1]].is_container}
 								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} />
 							{:else}
-								<Cell entry={row} path={subpath} />
+								<Cell entry={[map_entry_type, entry]} path={subpath} />
 							{/if}
 						</td>
 					</tr>
@@ -139,7 +139,6 @@ import { THRIFT } from "./Types.js";
 					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
-					{@debug entry}
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th class="px-6 py-4">
 							{i}
