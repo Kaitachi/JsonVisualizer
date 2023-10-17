@@ -25,6 +25,12 @@
 		if (timestamp || timestamp === 0) {
 			helpers.push(new Date(timestamp).toUTCString());
 		}
+	} else if (type === "str") {
+		// If this string is a number, we could also attempt to show the date
+		let timestamp = Number(value);
+		if (!isNaN(timestamp)) {
+			helpers.push(new Date(timestamp).toUTCString());
+		}
 	}
 
 	let props = {
@@ -44,12 +50,6 @@
 		}
 	}
 </script>
-
-{#if false}
-	<span title={helpers[0]} data-type={type} data-value={value} data-path={path}>{value}</span>
-{:else if false}
-	<input type="text" bind:value={value} data-path={path} />
-{/if}
 
 <InPlaceEdit bind:value={value} on:submit={submit(`${path}`)} props={props} />
 

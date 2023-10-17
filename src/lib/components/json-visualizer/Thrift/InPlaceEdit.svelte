@@ -54,7 +54,7 @@
 		<input bind:value on:blur={submit} {required} use:focus/>
 	</form>
 {:else}
-	<div on:click={edit} role="textbox" {...props}>
+	<div on:click={edit} role="textbox" tabindex="0" {...props}>
 		{value}
 	</div>
 {/if}
