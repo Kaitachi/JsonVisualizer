@@ -135,8 +135,6 @@ import { THRIFT } from "./Types.js";
 
 				{#each obj.slice(2) as entry, i}
 					{@const row = Object.entries(entry)}
-					{@const key = row[0][0]}
-					{@const value = row[0][1]}
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
