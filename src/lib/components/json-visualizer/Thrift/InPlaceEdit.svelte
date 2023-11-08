@@ -9,9 +9,6 @@
 	/** @type {boolean} */
 	export let required = true;
 
-	/** @type {any} */
-	export let props;
-
 	const dispatch = createEventDispatcher();
 
 	/** @type {boolean} */
@@ -54,7 +51,7 @@
 		<input bind:value on:blur={submit} {required} use:focus/>
 	</form>
 {:else}
-	<div on:click={edit} role="textbox" tabindex="0" {...props}>
+	<div on:click={edit} role="textbox" tabindex="0">
 		{value}
 	</div>
 {/if}
