@@ -51,7 +51,5 @@ function syncWritable(key, fallback) {
 	return localStorageStore
 }
 
-export const fieldUpdates = writable([]);
-
 export const payload = syncWritable("payload", "");
 

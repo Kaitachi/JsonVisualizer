@@ -1,6 +1,7 @@
 <script>
-	import { fieldUpdates } from "../../../../stores";
+	import { payload } from "../../../../stores";
 	import Tooltip from "../Common/tooltip.svelte";
+	import { update } from "./Logic.js";
 	import InPlaceEdit from "./InPlaceEdit.svelte";
 
 
@@ -36,14 +37,13 @@
 
 	function submit(field) {
 		return ({detail: newValue}) => {
-			$fieldUpdates.push({
+			const changes = {
 				path: field,
 				type: type,
 				value: newValue
-			});
-			$fieldUpdates = $fieldUpdates;
+			};
 
-			console.log(`updating ${field}: "${newValue}".`);
+			$payload = update($payload, changes);
 		}
 	}
 </script>

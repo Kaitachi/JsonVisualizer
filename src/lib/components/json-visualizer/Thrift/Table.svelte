@@ -1,6 +1,6 @@
 <script>
 	import Cell from "./Cell.svelte";
-import { THRIFT } from "./Types.js";
+	import { THRIFT } from "./Types.js";
 
 	/** @type {any} */
 	export let obj;
