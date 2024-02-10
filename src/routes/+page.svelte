@@ -1,17 +1,15 @@
 <script>
 	import ThriftObjectDisplay from '$components/json-visualizer/Thrift/ThriftObjectDisplay.svelte';
 	import { THRIFT } from '$components/json-visualizer/Thrift/Types';
-	import { fieldUpdates } from '../stores';
+	import { payload, fieldUpdates } from '../stores';
 	
-	let userInput = '';
-
 	$fieldUpdates = [];
 
 	fieldUpdates.subscribe((currentValue) => {
 		if (currentValue && currentValue.length) {
 			console.log(`> Received new fieldUpdate entry... ${JSON.stringify(currentValue)}`);
 
-			let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE(userInput);
+			let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE($payload);
 
 			currentValue.forEach((item) => {
 				console.log(`>> Applying entry: ${item.path} = ${item.value} (${item.type})`);
@@ -24,7 +22,7 @@
 				console.log(`>> replace: ${replace}`);
 				eval(replace);
 
-				userInput = JSON.stringify(inputObject);
+				payload.set(JSON.stringify(inputObject));
 				console.log(`>> result: ${JSON.stringify(inputObject)}`);
 			});
 
@@ -39,7 +37,7 @@
 	<form class="my-6">
 		<div class="flex flex-col text-sm mb-2">
 			<label for="thriftObject" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Input Message</label>
-			<textarea bind:value={userInput} name="thriftObject" rows="8"
+			<textarea bind:value={$payload} name="thriftObject" rows="8"
 				class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
 			></textarea>
 		</div>
@@ -54,8 +52,8 @@
 	<hr />
 
 	<p>
-	{#if userInput}
-		<ThriftObjectDisplay json={userInput} />
+	{#if $payload}
+		<ThriftObjectDisplay json={$payload} />
 	{/if}
 	</p>
 </main>
