@@ -1,0 +1,50 @@
+export const TOKEN = {
+	// Single-character tokens
+	LEFT_PAREN: "LEFT_PAREN",
+	RIGHT_PAREN: "RIGHT_PAREN",
+	LEFT_BRACE: "LEFT_BRACE",
+	RIGHT_BRACE: "RIGHT_BRACE",
+	COMMA: "COMMA",
+	DOT: "DOT",
+	COLON: "COLON",
+
+	// One or two-character tokens
+	EQUAL: "EQUAL",
+	SLASH_SLASH: "SLASH_SLASH",
+	SLASH_STAR: "SLASH_STAR",
+	STAR_SLASH: "STAR_SLASH",
+
+	// Literals
+	IDENTIFIER: "IDENTIFIER",
+
+	// Keywords
+	CONST: "CONST",
+	EXCEPTION: "EXCEPTION",
+	EXTENDS: "EXTENDS",
+	INCLUDE: "INCLUDE",
+	NAMESPACE: "NAMESPACE",
+	ONEWAY: "ONEWAY",
+	OPTIONAL: "OPTIONAL",
+	SERVICE: "SERVICE",
+	STRUCT: "STRUCT",
+	THROWS: "THROWS",
+	TYPEDEF: "TYPEDEF",
+
+	// Containers
+	LIST: "LIST",
+	MAP: "MAP",
+	SET: "SET",
+
+	// Base types
+	BOOL: "BOOL",
+	BYTE: "BYTE",
+	DOUBLE: "DOUBLE",
+	I16: "I16",
+	I32: "I32",
+	I64: "I64",
+	STRING: "STRING",
+	VOID: "VOID",
+
+	EOF: "EOF"
+};
+

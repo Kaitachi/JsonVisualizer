@@ -1,6 +1,11 @@
 <script>
+	import { fromLocalStorage } from "../../../../stores.js";
+	import { loadService } from "./Lexer/main.js";
 	import { THRIFT } from "./Types.js";
 	import Table from "./Table.svelte";
+
+	/** @type {string} */
+	export let service;
 
 	/** @type {string} */
 	export let json;
@@ -16,6 +21,11 @@
 
 	/** @type {string} */
 	let errorMessage = "";
+
+	const source = fromLocalStorage(`thrift.services.${service}`, "");
+	const serviceJson = loadService(source);
+
+	console.table(serviceJson);
 
 	$: {
 		try {

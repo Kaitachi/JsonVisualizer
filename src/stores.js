@@ -7,7 +7,7 @@ import { writable } from "svelte/store";
 	 * @param {string} key - name of value to be retrieved
 	 * @param {any} fallback - fallback value if no corresponding entry is found
 	 */
-function fromLocalStorage(key, fallback) {
+export function fromLocalStorage(key, fallback) {
 	if (browser) {
 		const value = window.localStorage.getItem(key);
 
@@ -27,7 +27,7 @@ function fromLocalStorage(key, fallback) {
 	 * @param {string} key - name of value to be persisted
 	 * @param {import("svelte/store").Writable<any>} store - SvelteKit store to be persisted
 	 */
-function toLocalStorage(key, store) {
+export function toLocalStorage(key, store) {
 	if (browser) {
 		store.subscribe(value => {
 			let storageValue = (typeof value === "object")
@@ -52,4 +52,22 @@ function syncWritable(key, fallback) {
 }
 
 export const payload = syncWritable("payload", "");
+export const thriftServices = syncWritable("thrift.services", {});
+export const selectedThriftService = syncWritable("thrift.selected", "");
+
+
+
+// window.localStorage.setItem("thrift.services.MultiplicationService", `namespace java tutorial
+// namespace py tutorial
+//
+// /*
+//  C like comments are supported
+// */
+// // This is also a valid comment
+//
+// typedef i32 int // We can use typedef to get pretty names for the types we are using
+// service MultiplicationService
+// {
+//         int multiply(1:int n1, 2:int n2),
+// }`);
 
