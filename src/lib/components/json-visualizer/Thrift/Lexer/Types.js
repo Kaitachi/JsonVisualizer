@@ -1,50 +1,52 @@
+/** @type {Object.<string, {type: string, text?: string, literal?: any}>} */
 export const TOKEN = {
 	// Single-character tokens
-	LEFT_PAREN: "LEFT_PAREN",
-	RIGHT_PAREN: "RIGHT_PAREN",
-	LEFT_BRACE: "LEFT_BRACE",
-	RIGHT_BRACE: "RIGHT_BRACE",
-	COMMA: "COMMA",
-	DOT: "DOT",
-	COLON: "COLON",
+	LEFT_PAREN: {type: "LEFT_PAREN"},
+	RIGHT_PAREN: {type: "RIGHT_PAREN"},
+	LEFT_BRACE: {type: "LEFT_BRACE"},
+	RIGHT_BRACE: {type: "RIGHT_BRACE"},
+	COMMA: {type: "COMMA"},
+	DOT: {type: "DOT"},
+	COLON: {type: "COLON"},
 
 	// One or two-character tokens
-	EQUAL: "EQUAL",
-	SLASH_SLASH: "SLASH_SLASH",
-	SLASH_STAR: "SLASH_STAR",
-	STAR_SLASH: "STAR_SLASH",
+	EQUAL: {type: "EQUAL"},
+	SLASH_SLASH: {type: "SLASH_SLASH"},
+	SLASH_STAR: {type: "SLASH_STAR"},
+	STAR_SLASH: {type: "STAR_SLASH"},
 
 	// Literals
-	IDENTIFIER: "IDENTIFIER",
+	IDENTIFIER: {type: "IDENTIFIER"},
+	NUMBER: {type: "NUMBER"},
 
 	// Keywords
-	CONST: "CONST",
-	EXCEPTION: "EXCEPTION",
-	EXTENDS: "EXTENDS",
-	INCLUDE: "INCLUDE",
-	NAMESPACE: "NAMESPACE",
-	ONEWAY: "ONEWAY",
-	OPTIONAL: "OPTIONAL",
-	SERVICE: "SERVICE",
-	STRUCT: "STRUCT",
-	THROWS: "THROWS",
-	TYPEDEF: "TYPEDEF",
+	CONST: {type: "CONST"},
+	EXCEPTION: {type: "EXCEPTION"},
+	EXTENDS: {type: "EXTENDS"},
+	INCLUDE: {type: "INCLUDE"},
+	NAMESPACE: {type: "NAMESPACE"},
+	ONEWAY: {type: "ONEWAY"},
+	OPTIONAL: {type: "OPTIONAL"},
+	SERVICE: {type: "SERVICE"},
+	STRUCT: {type: "STRUCT"},
+	THROWS: {type: "THROWS"},
+	TYPEDEF: {type: "TYPEDEF"},
 
 	// Containers
-	LIST: "LIST",
-	MAP: "MAP",
-	SET: "SET",
+	LIST: {type: "LIST"},
+	MAP: {type: "MAP"},
+	SET: {type: "SET"},
 
 	// Base types
-	BOOL: "BOOL",
-	BYTE: "BYTE",
-	DOUBLE: "DOUBLE",
-	I16: "I16",
-	I32: "I32",
-	I64: "I64",
-	STRING: "STRING",
-	VOID: "VOID",
+	BOOL: {type: "BOOL"},
+	BYTE: {type: "BYTE"},
+	DOUBLE: {type: "DOUBLE"},
+	I16: {type: "I16"},
+	I32: {type: "I32"},
+	I64: {type: "I64"},
+	STRING: {type: "STRING"},
+	VOID: {type: "VOID"},
 
-	EOF: "EOF"
+	EOF: {type: "EOF"}
 };
 

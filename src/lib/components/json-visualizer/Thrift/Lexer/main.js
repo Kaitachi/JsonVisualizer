@@ -6,9 +6,10 @@ import { Scanner } from "./Scanner.js";
 	 * @returns {any} JSON object with Service definition
 	 */
 export function loadService(source) {
-	console.log("> initializing scanner...");
-	let scanner = new Scanner(source);
-	scanner.scanTokens();
+	const scanner = new Scanner(source);
+	const tokens = scanner.scanTokens();
+
+	console.table(tokens);
 
 	return {test: 123};
 }
