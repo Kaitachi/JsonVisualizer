@@ -1,4 +1,5 @@
 import { Scanner } from "./Scanner.js";
+import { Parser } from "./Parser.js";
 
 	/**
 	 * Transform given source string to JSON-ified Thrift service.
@@ -11,6 +12,11 @@ export function loadService(source) {
 
 	console.table(tokens);
 
-	return {test: 123};
+	const parser = new Parser(tokens);
+	const tree = parser.parse();
+
+	console.warn("DONE LOADING");
+
+	return {tree};
 }
 

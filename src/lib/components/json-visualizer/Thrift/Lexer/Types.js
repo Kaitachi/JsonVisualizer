@@ -1,4 +1,11 @@
-/** @type {Object.<string, {type: string, text?: string, literal?: any}>} */
+/**
+	* @typedef {Object} token
+	* @property {string} type
+	* @property {string} text
+	* @property {any} [literal]
+	*/
+
+/** @type {Object.<string, {type: string}>} */
 export const TOKEN = {
 	// Single-character tokens
 	LEFT_PAREN: {type: "LEFT_PAREN"},
@@ -21,6 +28,8 @@ export const TOKEN = {
 
 	// Keywords
 	CONST: {type: "CONST"},
+	CPP_INCLUDE: {type: "CPP_INCLUDE"},
+	ENUM: {type: "ENUM"},
 	EXCEPTION: {type: "EXCEPTION"},
 	EXTENDS: {type: "EXTENDS"},
 	INCLUDE: {type: "INCLUDE"},
@@ -31,6 +40,7 @@ export const TOKEN = {
 	STRUCT: {type: "STRUCT"},
 	THROWS: {type: "THROWS"},
 	TYPEDEF: {type: "TYPEDEF"},
+	UNION: {type: "UNION"},
 
 	// Containers
 	LIST: {type: "LIST"},

@@ -16,6 +16,7 @@ export class Scanner {
 		EXCEPTION: {type: "EXCEPTION"},
 		EXTENDS: {type: "EXTENDS"},
 		INCLUDE: {type: "INCLUDE"},
+		CPP_INCLUDE: {type: "CPP_INCLUDE"},
 		NAMESPACE: {type: "NAMESPACE"},
 		ONEWAY: {type: "ONEWAY"},
 		OPTIONAL: {type: "OPTIONAL"},
@@ -58,12 +59,14 @@ export class Scanner {
 			this.#scanToken();
 		}
 
+		// Add final token to make it easy to detect we're done
+		this.#tokens.push({ ...TOKEN.EOF });
+
 		return this.#tokens;
 	}
 
 	#scanToken() {
 		const c = this.#advance();
-		console.log(`scanning ${c}...`);
 
 		switch (c) {
 			// Single-character tokens
@@ -95,6 +98,7 @@ export class Scanner {
 			case " ":
 			case "\r":
 			case "\t":
+			case "\u{a0}": // non-breaking space
 				// Ignore whitespace
 				break;
 
@@ -109,36 +113,10 @@ export class Scanner {
 				} else if (this.#isAlpha(c)) {
 					this.#identifier();
 				} else {
-					console.error(`> Unexpected character: ${c}.`);
+					console.error(`> Unexpected character: >${c}< unicode >${c.charCodeAt(0)}<.`);
 				}
 				break;
 		}
-	}
-
-
-	// ==========================
-	// MARK: - Index Methods
-	// ==========================
-
-	/**
-	 * @param {string} expected
-	 */
-	#match(expected) {
-		if (this.#isAtEnd()) return false;
-		if (this.#source.charAt(this.#current) != expected) return false;
-
-		this.#current++;
-		return true;
-	}
-
-	#peek() {
-		if (this.#isAtEnd()) return "\0";
-		return this.#source.charAt(this.#current);
-	}
-
-	#peekNext() {
-		if (this.#current + 1 >= this.#source.length) return "\0";
-		return this.#source.charAt(this.#current + 1);
 	}
 
 
@@ -152,8 +130,6 @@ export class Scanner {
 		let text = this.#source.substring(this.#start, this.#current);
 		let type = this.#keywords[text.toUpperCase()]?.type;
 		if (type == null) type = TOKEN["IDENTIFIER"].type;
-
-		console.error({text, type});
 
 		this.#addToken(type);
 	}
@@ -192,6 +168,32 @@ export class Scanner {
 
 
 	// ==========================
+	// MARK: - Index Methods
+	// ==========================
+
+	/**
+	 * @param {string} expected
+	 */
+	#match(expected) {
+		if (this.#isAtEnd()) return false;
+		if (this.#source.charAt(this.#current) != expected) return false;
+
+		this.#current++;
+		return true;
+	}
+
+	#peek() {
+		if (this.#isAtEnd()) return "\0";
+		return this.#source.charAt(this.#current);
+	}
+
+	#peekNext() {
+		if (this.#current + 1 >= this.#source.length) return "\0";
+		return this.#source.charAt(this.#current + 1);
+	}
+
+
+	// ==========================
 	// MARK: - Helper Methods
 	// ==========================
 
@@ -208,10 +210,12 @@ export class Scanner {
 	 * @param {any} literal
 	 */
 	#addToken(type, literal = null) {
-		const token = { ...TOKEN[type] };
-		console.info({token});
-		token.text = this.#source.substring(this.#start, this.#current);
-		token.literal = literal;
+		/** @type {import("./Types.js").token} tokens */
+		const token = {
+			...TOKEN[type],
+			text: this.#source.substring(this.#start, this.#current),
+			literal: literal
+		};
 
 		this.#tokens.push(token);
 	}

@@ -25,7 +25,7 @@
 	const source = fromLocalStorage(`thrift.services.${service}`, "");
 	const serviceJson = loadService(source);
 
-	console.table(serviceJson);
+	console.log({serviceJson});
 
 	$: {
 		try {
