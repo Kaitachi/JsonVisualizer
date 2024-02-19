@@ -74,11 +74,15 @@ import { TOKEN } from "./Types.js";
 /**
  * [12] Union - Thrift Union Object
  * @typedef {Object} Union
+ * @property {string} identifier
+ * @property {Field[]} fields
  */
 
 /**
  * [13] Exception - Thrift Exception Object
  * @typedef {Object} Exception
+ * @property {string} identifier
+ * @property {Field[]} fields
  */
 
 /**
@@ -222,12 +226,20 @@ export class Parser {
 				};
 
 			case TOKEN.UNION.type:
-				// TODO: Parse UNION type!
-				throw this.#error(token.type, `Definition token ${token.type} not supported!`);
+				const union = this.#union();
+				return {
+					type: TOKEN.UNION.type,
+					name: union.identifier,
+					definition: union
+				};
 
 			case TOKEN.EXCEPTION.type:
-				// TODO: Parse EXCEPTION type!
-				throw this.#error(token.type, `Definition token ${token.type} not supported!`);
+				const exception = this.#exception();
+				return {
+					type: TOKEN.EXCEPTION.type,
+					name: exception.identifier,
+					definition: exception
+				};
 
 			case TOKEN.SERVICE.type:
 				const service = this.#service();
@@ -263,18 +275,35 @@ export class Parser {
 	#struct() {
 		this.#consume(TOKEN.STRUCT, "Incorrect struct definition");
 		const identifier = this.#advance();
+		const fields = this.#fields();
 
-		/** @type {Field[]} */
-		const fields = [];
+		return {
+			identifier: identifier.text,
+			fields
+		};
+	}
 
-		this.#consume(TOKEN.LEFT_BRACE, "Incorrect struct definition");
+	/**
+	 * @returns {Union}
+	 */
+	#union() {
+		this.#consume(TOKEN.UNION, "Incorrect union definition");
+		const identifier = this.#advance();
+		const fields = this.#fields();
 
-		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
-			fields.push(this.#field());
-			// this.#advance();
-		}
+		return {
+			identifier: identifier.text,
+			fields
+		};
+	}
 
-		this.#consume(TOKEN.RIGHT_BRACE, "Incorrect struct definition");
+	/**
+	 * @returns {Exception}
+	 */
+	#exception() {
+		this.#consume(TOKEN.EXCEPTION, "Incorrect exception definition");
+		const identifier = this.#advance();
+		const fields = this.#fields();
 
 		return {
 			identifier: identifier.text,
@@ -295,6 +324,21 @@ export class Parser {
 	// MARK: - Sub-Methods
 	// ==========================
 	
+	#fields() {
+		/** @type {Field[]} */
+		const fields = [];
+
+		this.#consume(TOKEN.LEFT_BRACE, "Expected opening brace");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+			fields.push(this.#field());
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACE, "Expected closing brace");
+
+		return fields;
+	}
+
 	/**
 	 * @returns {Field}
 	 */
