@@ -13,6 +13,7 @@ export const TOKEN = {
 	LEFT_BRACE: {type: "LEFT_BRACE"},
 	RIGHT_BRACE: {type: "RIGHT_BRACE"},
 	COMMA: {type: "COMMA"},
+	SEMICOLON: {type: "SEMICOLON"},
 	DOT: {type: "DOT"},
 	COLON: {type: "COLON"},
 
@@ -36,6 +37,7 @@ export const TOKEN = {
 	NAMESPACE: {type: "NAMESPACE"},
 	ONEWAY: {type: "ONEWAY"},
 	OPTIONAL: {type: "OPTIONAL"},
+	REQUIRED: {type: "REQUIRED"},
 	SERVICE: {type: "SERVICE"},
 	STRUCT: {type: "STRUCT"},
 	THROWS: {type: "THROWS"},

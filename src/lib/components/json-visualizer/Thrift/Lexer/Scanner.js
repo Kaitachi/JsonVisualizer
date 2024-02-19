@@ -77,6 +77,7 @@ export class Scanner {
 			case ",": this.#addToken("COMMA"); break;
 			case ".": this.#addToken("DOT"); break;
 			case ":": this.#addToken("COLON"); break;
+			case ";": this.#addToken("SEMICOLON"); break;
 
 			case "/":
 				if (this.#match("/")) {

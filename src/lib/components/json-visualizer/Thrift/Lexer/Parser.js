@@ -30,8 +30,8 @@ import { TOKEN } from "./Types.js";
 /**
  * [05] Namespace - Thrift Namespace Header
  * @typedef {Object} Namespace
- * @property {import("./Types.js").token} scope
- * @property {import("./Types.js").token} identifier
+ * @property {string} scope
+ * @property {string} identifier
  */
 
 /**
@@ -55,8 +55,8 @@ import { TOKEN } from "./Types.js";
 /**
  * [09] Typedef - Thrift Typedef Object
  * @typedef {Object} Typedef
- * @property {import("./Types.js").token} definitionType
- * @property {import("./Types.js").token} identifier
+ * @property {string} definitionType
+ * @property {string} identifier
  */
 
 /**
@@ -67,7 +67,7 @@ import { TOKEN } from "./Types.js";
 /**
  * [11] Struct - Thrift Struct Object
  * @typedef {Object} Struct
- * @property {import("./Types.js").token} identifier
+ * @property {string} identifier
  * @property {Field[]} fields
  */
 
@@ -89,11 +89,11 @@ import { TOKEN } from "./Types.js";
 /**
  * [15] Field - Thrift Field Object
  * @typedef {Object} Field
- * @property {import("./Types.js").token?} id
- * @property {import("./Types.js").token?} requiredness
- * @property {import("./Types.js").token} type
- * @property {import("./Types.js").token} identifier
- * @property {import("./Types.js").token?} value
+ * @property {number?} id
+ * @property {string?} requiredness
+ * @property {string} type
+ * @property {string} identifier
+ * @property {any} value
  */
 
 export class Parser {
@@ -161,7 +161,7 @@ export class Parser {
 				const namespace = this.#namespace();
 				return {
 					type: TOKEN.NAMESPACE.type,
-					name: namespace.scope.text,
+					name: namespace.scope,
 					header: namespace
 				}
 
@@ -180,8 +180,8 @@ export class Parser {
 		const identifier = this.#advance();
 
 		return {
-			scope,
-			identifier
+			scope: scope.text,
+			identifier: identifier.text
 		};
 	}
 
@@ -205,7 +205,7 @@ export class Parser {
 				const typedef = this.#typedef();
 				return {
 					type: TOKEN.TYPEDEF.type,
-					name: typedef.identifier.text,
+					name: typedef.identifier,
 					definition: typedef
 				};
 
@@ -217,7 +217,7 @@ export class Parser {
 				const struct = this.#struct();
 				return {
 					type: TOKEN.STRUCT.type,
-					name: struct.identifier.text,
+					name: struct.identifier,
 					definition: struct
 				};
 
@@ -233,7 +233,7 @@ export class Parser {
 				const service = this.#service();
 				return {
 					type: TOKEN.SERVICE.type,
-					name: service.identifier.text,
+					name: service.identifier,
 					definition: service
 				};
 
@@ -252,8 +252,8 @@ export class Parser {
 		const identifier = this.#advance();
 
 		return {
-			definitionType,
-			identifier
+			definitionType: definitionType.text,
+			identifier: identifier.text
 		};
 	}
 
@@ -267,8 +267,17 @@ export class Parser {
 		/** @type {Field[]} */
 		const fields = [];
 
+		this.#consume(TOKEN.LEFT_BRACE, "Incorrect struct definition");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+			fields.push(this.#field());
+			// this.#advance();
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACE, "Incorrect struct definition");
+
 		return {
-			identifier,
+			identifier: identifier.text,
 			fields
 		};
 	}
@@ -291,21 +300,72 @@ export class Parser {
 	 */
 	#field() {
 
-		// TODO: Define field method!
-		return {};
+		const id = this.#fieldId();
+		const requiredness = this.#fieldReq();
+		const type = this.#advance();
+		const identifier = this.#advance();
+		const value = this.#constValue();
+
+		// Swallow list separator
+		this.#listSeparator();
+
+		return {
+			id: id?.literal,
+			requiredness: (requiredness) ? requiredness.text : null,
+			type: type.text,
+			identifier: identifier.text,
+			value: value
+		};
 	}
 
+	#fieldId() {
+		if (this.#peekNext()?.type === TOKEN.COLON.type) {
+			const id = this.#advance();
+			
+			this.#consume(TOKEN.COLON, "Incorrect fieldId definition");
+
+			return id;
+		}
+
+		return null;
+	}
+
+	#fieldReq() {
+		if (this.#match(TOKEN.REQUIRED, TOKEN.OPTIONAL)) {
+			return this.#previous();
+		}
+
+		return null;
+	}
+
+
+	// ==========================
+	// MARK: - Constant Values
+	// ==========================
+
+	#constValue() {
+		// TODO: Parse CONSTVALUE type!
+		return null;
+	}
+
+	#listSeparator() {
+		if (this.#match(TOKEN.COMMA, TOKEN.SEMICOLON)) {
+			return this.#previous();
+		}
+
+		return null;
+	}
 
 	// ==========================
 	// MARK: - Helper Methods
 	// ==========================
 
 	/**
-	 * @param {string[]} types
+	 * @param {{type: string}[]} tokens
 	 */
-	#match(...types) {
-		types.forEach(type =>
-			{ if (this.#check(type)) {
+	#match(...tokens) {
+		tokens.forEach(token =>
+			{ if (this.#check(token.type)) {
                 this.#advance();
                 return true;
             }
@@ -345,6 +405,12 @@ export class Parser {
 
 	#peek() {
 		return this.#tokens[this.#current];
+	}
+
+	#peekNext() {
+		return (this.#current + 1 <= this.#tokens.length)
+			? this.#tokens[this.#current + 1]
+			: null;
 	}
 
 	/**
