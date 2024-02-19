@@ -88,6 +88,9 @@ import { TOKEN } from "./Types.js";
 /**
  * [14] Service - Thrift Service Object
  * @typedef {Object} Service
+ * @property {string} identifier
+ * @property {string} extending
+ * @property {ThriftFunction[]} functions
  */
 
 /**
@@ -98,6 +101,16 @@ import { TOKEN } from "./Types.js";
  * @property {string} type
  * @property {string} identifier
  * @property {any} value
+ */
+
+/**
+ * [20] Function - Thrift Function Object
+ * @typedef {Object} ThriftFunction
+ * @property {string?} oneway
+ * @property {string} identifier
+ * @property {string} returns
+ * @property {Field[]} fields
+ * @property {Field[]?} throws
  */
 
 export class Parser {
@@ -275,7 +288,7 @@ export class Parser {
 	#struct() {
 		this.#consume(TOKEN.STRUCT, "Incorrect struct definition");
 		const identifier = this.#advance();
-		const fields = this.#fields();
+		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
 			identifier: identifier.text,
@@ -289,7 +302,7 @@ export class Parser {
 	#union() {
 		this.#consume(TOKEN.UNION, "Incorrect union definition");
 		const identifier = this.#advance();
-		const fields = this.#fields();
+		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
 			identifier: identifier.text,
@@ -303,7 +316,7 @@ export class Parser {
 	#exception() {
 		this.#consume(TOKEN.EXCEPTION, "Incorrect exception definition");
 		const identifier = this.#advance();
-		const fields = this.#fields();
+		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
 			identifier: identifier.text,
@@ -315,26 +328,100 @@ export class Parser {
 	 * @returns {Service}
 	 */
 	#service() {
+		this.#consume(TOKEN.SERVICE, "Incorrect service definition");
+		const identifier = this.#advance();
+		console.warn(`>> service ${identifier.text}`);
+		const extending = "";
+		const functions = this.#functions();
 
-		return {};
+		return {
+			identifier: identifier.text,
+			extending: extending,
+			functions: functions
+		};
 	}
 
 
 	// ==========================
-	// MARK: - Sub-Methods
+	// MARK: - Function Methods
 	// ==========================
-	
-	#fields() {
+
+	#functions() {
+		/** @type {ThriftFunction[]} */
+		const functions = [];
+
+		this.#consume(TOKEN.LEFT_BRACE, "[#function] Expected opening brace");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+			functions.push(this.#function());
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACE, "[#function] Expected closing brace");
+
+		return functions;
+	}
+
+	/**
+	 * @returns {ThriftFunction}
+	 */
+	#function() {
+		const oneway = this.#oneway();
+		const functionType = this.#advance();
+		const identifier = this.#advance();
+		const fields = this.#fields(TOKEN.LEFT_PAREN, TOKEN.RIGHT_PAREN);
+		const throws = this.#throws();
+
+		// Swallow list separator
+		this.#listSeparator();
+
+		return {
+			oneway: (oneway) ? oneway.text : null,
+			identifier: identifier.text,
+			returns: functionType.text,
+			fields: fields,
+			throws: throws
+		};
+	}
+
+	#oneway() {
+		if (this.#peekNext()?.type === TOKEN.ONEWAY.type) {
+			return this.#advance();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @returns {Field[]?}
+	 */
+	#throws() {
+		if (this.#peekNext()?.type === TOKEN.THROWS.type) {
+			this.#consume(TOKEN.THROWS, "Incorrect throws definition");
+			return this.#fields(TOKEN.LEFT_PAREN, TOKEN.RIGHT_PAREN);
+		}
+		return [];
+	}
+
+
+	// ==========================
+	// MARK: - Field Methods
+	// ==========================
+
+	/**
+	 * @param {{type: string}} left
+	 * @param {{type: string}} right
+	 */
+	#fields(left, right) {
 		/** @type {Field[]} */
 		const fields = [];
 
-		this.#consume(TOKEN.LEFT_BRACE, "Expected opening brace");
+		this.#consume(left, "[#fields] Expected opening brace");
 
-		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+		while (this.#peek().type !== right.type) {
 			fields.push(this.#field());
 		}
 
-		this.#consume(TOKEN.RIGHT_BRACE, "Expected closing brace");
+		this.#consume(right, "[#fields] Expected closing brace");
 
 		return fields;
 	}
@@ -343,7 +430,6 @@ export class Parser {
 	 * @returns {Field}
 	 */
 	#field() {
-
 		const id = this.#fieldId();
 		const requiredness = this.#fieldReq();
 		const type = this.#advance();
