@@ -1,6 +1,6 @@
 <script>
 	import ThriftObjectDisplay from '$components/json-visualizer/Thrift/ThriftObjectDisplay.svelte';
-	import { selectedThriftService, payload } from '../stores';
+	import { thriftServices, selectedThriftService, payload  } from '../stores';
 
 </script>
 
@@ -12,14 +12,16 @@
 			<div class="flex flex-col w-1/3 text-sm mb-2">
 				<label for="selectedThriftService" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
 				<select bind:value={$selectedThriftService} name="selectedThriftService">
-					<option value="">- NONE -</option>
-					<option value="testService">testService</option>
-					<option value="MultiplicationService">MultiplicationService</option>
-					<!-- TODO: add collection of existing Thrift services! -->
+					<option disabled value="">- Select a service... -</option>
+					{#if $thriftServices}
+						{#each $thriftServices as service }
+							<option value="{service}">{service}</option>
+						{/each}
+					{/if}
 				</select>
 			</div>
 			<div class="flex flex-col w-2/3 text-sm mb-2 ml-5">
-				<span class="font-bold mb-2 text-gray-800 dark:text-gray-100">Edit Thrift Files...</span>
+				<!--<span class="font-bold mb-2 text-gray-800 dark:text-gray-100">Edit Thrift Files...</span>-->
 			</div>
 		</fieldset>
 		<fieldset>

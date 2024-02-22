@@ -330,7 +330,6 @@ export class Parser {
 	#service() {
 		this.#consume(TOKEN.SERVICE, "Incorrect service definition");
 		const identifier = this.#advance();
-		console.warn(`>> service ${identifier.text}`);
 		const extending = "";
 		const functions = this.#functions();
 

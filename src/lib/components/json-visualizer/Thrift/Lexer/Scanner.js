@@ -92,6 +92,8 @@ export class Scanner {
 						console.warn("ignoring character...");
 						this.#advance();
 					}
+					this.#advance();
+					this.#advance();
 				}
 				break;
 

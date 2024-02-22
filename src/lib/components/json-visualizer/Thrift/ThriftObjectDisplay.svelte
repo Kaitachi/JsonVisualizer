@@ -1,7 +1,8 @@
 <script>
-	import { fromLocalStorage } from "../../../../stores.js";
+	import { fromLocalStorage, thriftServices } from "../../../../stores.js";
 	import { loadService } from "./Lexer/main.js";
 	import { THRIFT } from "./Types.js";
+	import { getLocalStorageServices } from "./Logic.js";
 	import Table from "./Table.svelte";
 
 	/** @type {string} */
@@ -26,6 +27,8 @@
 	const serviceJson = loadService(source);
 
 	console.log({serviceJson});
+
+	$thriftServices = getLocalStorageServices();
 
 	$: {
 		try {
