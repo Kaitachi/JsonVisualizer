@@ -4,6 +4,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [01] Document - Thrift Document
+ * [01] Document        ::=  Header* Definition*
+ *
  * @typedef {Object} Document
  * @property {Object.<string, Header>} headers - collection of headers for this document
  * @property {Object.<string, Definition>} definitions - collection of definitions for this document
@@ -11,6 +13,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [02] Header - Thrift Header
+ * [02] Header          ::=  Include | CppInclude | Namespace
+ *
  * @typedef {Object} Header
  * @property {string} type
  * @property {string} name
@@ -19,16 +23,22 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [03] Include - Thrift Include Header
+ * [03] Include         ::=  'include' Literal
+ *
  * @typedef {Object} Include
  */
 
 /**
  * [04] CppInclude - Thrift CppInclude Header
+ * [04] CppInclude      ::=  'cpp_include' Literal
+ *
  * @typedef {Object} CppInclude
  */
 
 /**
  * [05] Namespace - Thrift Namespace Header
+ * [05] Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
+ *
  * @typedef {Object} Namespace
  * @property {string} scope
  * @property {string} identifier
@@ -36,24 +46,32 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [06] NamespaceScope - Thrift Napespace Scope Directive
+ * [06] NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'
+ *
  * @typedef {Object} NamespaceScope
  */
 
 /**
  * [07] Definition - Thrift Definition Object
+ * [07] Definition      ::=  Const | Typedef | Enum | Struct | Union | Exception | Service
+ *
  * @typedef {Object} Definition
  * @property {string} type
  * @property {string} name
- * @property {Const|Typedef|Enum|Struct|Union|Exception|Service} definition
+ * @property {Const|Typedef|EnumType|Struct|Union|Exception|Service} definition
  */
 
 /**
  * [08] Const - Thrift Const Object
+ * [08] Const           ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
+ *
  * @typedef {Object} Const
  */
 
 /**
  * [09] Typedef - Thrift Typedef Object
+ * [09] Typedef         ::=  'typedef' DefinitionType Identifier
+ *
  * @typedef {Object} Typedef
  * @property {string} definitionType
  * @property {string} identifier
@@ -61,11 +79,17 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [10] Enum - Thrift Enum Object
- * @typedef {Object} Enum
+ * [10] Enum            ::=  'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
+ *
+ * @typedef {Object} EnumType
+ * @property {string} identifier
+ * @property {Object.<string, any>} enumerators
  */
 
 /**
  * [11] Struct - Thrift Struct Object
+ * [11] Struct          ::=  'struct' Identifier 'xsd_all'? '{' Field* '}'
+ *
  * @typedef {Object} Struct
  * @property {string} identifier
  * @property {Field[]} fields
@@ -73,6 +97,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [12] Union - Thrift Union Object
+ * [12] Union          ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
+ *
  * @typedef {Object} Union
  * @property {string} identifier
  * @property {Field[]} fields
@@ -80,6 +106,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [13] Exception - Thrift Exception Object
+ * [13] Exception       ::=  'exception' Identifier '{' Field* '}'
+ *
  * @typedef {Object} Exception
  * @property {string} identifier
  * @property {Field[]} fields
@@ -87,6 +115,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [14] Service - Thrift Service Object
+ * [14] Service         ::=  'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
+ *
  * @typedef {Object} Service
  * @property {string} identifier
  * @property {string} extending
@@ -95,6 +125,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [15] Field - Thrift Field Object
+ * [15] Field           ::=  FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? XsdFieldOptions ListSeparator?
+ *
  * @typedef {Object} Field
  * @property {number?} id
  * @property {string?} requiredness
@@ -105,6 +137,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [20] Function - Thrift Function Object
+ * [20] Function        ::=  'oneway'? FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+ *
  * @typedef {Object} ThriftFunction
  * @property {string?} oneway
  * @property {string} identifier
@@ -115,6 +149,8 @@ import { TOKEN } from "./Types.js";
 
 /**
  * [37] Identifier - Thrift Identifier Object
+ * [37] Identifier      ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+ *
  * @typedef {string} Identifier
  */
 
@@ -233,7 +269,12 @@ export class Parser {
 
 			case TOKEN.ENUM.type:
 				// TODO: Parse ENUM type!
-				throw this.#error(token.type, `Definition token ${token.type} not supported!`);
+				const enumType = this.#enum();
+				return {
+					type: TOKEN.ENUM.type,
+					name: enumType.identifier,
+					definition: enumType
+				};
 
 			case TOKEN.STRUCT.type:
 				const struct = this.#struct();
@@ -284,6 +325,41 @@ export class Parser {
 		return {
 			definitionType: definitionType.text,
 			identifier
+		};
+	}
+
+	/**
+	 * @returns {EnumType}
+	 */
+	#enum() {
+		const identifier = this.#identifier();
+		/** @type {Object.<string, any>} */
+		const enumerators = {};
+
+		this.#consume(TOKEN.LEFT_BRACE, "[#enum] Expected opening brace");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+			const enumerator = this.#identifier();
+			let value = null;
+			
+			if (this.#peek().type === TOKEN.EQUAL.type) {
+				// Swallow equals sign
+				this.#advance();
+
+				value = this.#intConstant();
+			}
+
+			// Swallow list separator
+			this.#listSeparator();
+
+			enumerators[enumerator] = value;
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACE, "[#enum] Expected closing brace");
+
+		return {
+			identifier,
+			enumerators
 		};
 	}
 
@@ -479,6 +555,14 @@ export class Parser {
 
 	#constValue() {
 		// TODO: Parse CONSTVALUE type!
+		return null;
+	}
+
+	#intConstant() {
+		if (this.#peek().type === TOKEN.NUMBER.type) {
+			return +this.#advance().text;
+		}
+
 		return null;
 	}
 

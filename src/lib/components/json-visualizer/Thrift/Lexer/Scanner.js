@@ -13,6 +13,7 @@ export class Scanner {
 	/** @type {Object.<string, any>} */
 	#keywords = {
 		CONST: {type: "CONST"},
+		ENUM: {type: "ENUM"},
 		EXCEPTION: {type: "EXCEPTION"},
 		EXTENDS: {type: "EXTENDS"},
 		INCLUDE: {type: "INCLUDE"},
@@ -78,6 +79,7 @@ export class Scanner {
 			case ".": this.#addToken("DOT"); break;
 			case ":": this.#addToken("COLON"); break;
 			case ";": this.#addToken("SEMICOLON"); break;
+			case "=": this.#addToken("EQUAL"); break;
 
 			case "/":
 				if (this.#match("/")) {
