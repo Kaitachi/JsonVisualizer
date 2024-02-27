@@ -113,6 +113,11 @@ import { TOKEN } from "./Types.js";
  * @property {Field[]?} throws
  */
 
+/**
+ * [37] Identifier - Thrift Identifier Object
+ * @typedef {string} Identifier
+ */
+
 export class Parser {
 
 	#current = 0;
@@ -194,11 +199,11 @@ export class Parser {
 	#namespace() {
 		this.#consume(TOKEN.NAMESPACE, "Incorrect namespace definition");
 		const scope = this.#advance();
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 
 		return {
 			scope: scope.text,
-			identifier: identifier.text
+			identifier
 		};
 	}
 
@@ -274,11 +279,11 @@ export class Parser {
 	#typedef() {
 		this.#consume(TOKEN.TYPEDEF, "Incorrect typedef definition");
 		const definitionType = this.#advance();
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 
 		return {
 			definitionType: definitionType.text,
-			identifier: identifier.text
+			identifier
 		};
 	}
 
@@ -287,11 +292,11 @@ export class Parser {
 	 */
 	#struct() {
 		this.#consume(TOKEN.STRUCT, "Incorrect struct definition");
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
-			identifier: identifier.text,
+			identifier,
 			fields
 		};
 	}
@@ -301,11 +306,11 @@ export class Parser {
 	 */
 	#union() {
 		this.#consume(TOKEN.UNION, "Incorrect union definition");
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
-			identifier: identifier.text,
+			identifier,
 			fields
 		};
 	}
@@ -315,11 +320,11 @@ export class Parser {
 	 */
 	#exception() {
 		this.#consume(TOKEN.EXCEPTION, "Incorrect exception definition");
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const fields = this.#fields(TOKEN.LEFT_BRACE, TOKEN.RIGHT_BRACE);
 
 		return {
-			identifier: identifier.text,
+			identifier,
 			fields
 		};
 	}
@@ -329,12 +334,12 @@ export class Parser {
 	 */
 	#service() {
 		this.#consume(TOKEN.SERVICE, "Incorrect service definition");
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const extending = "";
 		const functions = this.#functions();
 
 		return {
-			identifier: identifier.text,
+			identifier,
 			extending: extending,
 			functions: functions
 		};
@@ -366,7 +371,7 @@ export class Parser {
 	#function() {
 		const oneway = this.#oneway();
 		const functionType = this.#advance();
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const fields = this.#fields(TOKEN.LEFT_PAREN, TOKEN.RIGHT_PAREN);
 		const throws = this.#throws();
 
@@ -375,7 +380,7 @@ export class Parser {
 
 		return {
 			oneway: (oneway) ? oneway.text : null,
-			identifier: identifier.text,
+			identifier,
 			returns: functionType.text,
 			fields: fields,
 			throws: throws
@@ -432,7 +437,7 @@ export class Parser {
 		const id = this.#fieldId();
 		const requiredness = this.#fieldReq();
 		const type = this.#advance();
-		const identifier = this.#advance();
+		const identifier = this.#identifier();
 		const value = this.#constValue();
 
 		// Swallow list separator
@@ -442,7 +447,7 @@ export class Parser {
 			id: id?.literal,
 			requiredness: (requiredness) ? requiredness.text : null,
 			type: type.text,
-			identifier: identifier.text,
+			identifier,
 			value: value
 		};
 	}
@@ -483,6 +488,21 @@ export class Parser {
 		}
 
 		return null;
+	}
+
+
+	// ==========================
+	// MARK: - Basic Types
+	// ==========================
+
+	#identifier() {
+		let text = this.#advance().text;
+
+		while ([TOKEN.DOT.type, TOKEN.IDENTIFIER.type].includes(this.#peek()?.type)) {
+			text += this.#advance().text;
+		}
+
+		return text;
 	}
 
 	// ==========================
