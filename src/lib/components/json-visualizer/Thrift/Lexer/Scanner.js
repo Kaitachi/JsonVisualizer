@@ -10,36 +10,39 @@ export class Scanner {
 	/** @type {any[]} */
 	#tokens = [];
 
-	/** @type {Object.<string, any>} */
+	/** @type {Object.<string, import("./Types.js").tokenType>} */
 	#keywords = {
-		CONST: {type: "CONST"},
-		ENUM: {type: "ENUM"},
-		EXCEPTION: {type: "EXCEPTION"},
-		EXTENDS: {type: "EXTENDS"},
-		INCLUDE: {type: "INCLUDE"},
-		CPP_INCLUDE: {type: "CPP_INCLUDE"},
-		NAMESPACE: {type: "NAMESPACE"},
-		ONEWAY: {type: "ONEWAY"},
-		OPTIONAL: {type: "OPTIONAL"},
-		SERVICE: {type: "SERVICE"},
-		STRUCT: {type: "STRUCT"},
-		THROWS: {type: "THROWS"},
-		TYPEDEF: {type: "TYPEDEF"},
+		CONST: TOKEN.CONST,
+		ENUM: TOKEN.ENUM,
+		EXCEPTION: TOKEN.EXCEPTION,
+		EXTENDS: TOKEN.EXTENDS,
+		INCLUDE: TOKEN.INCLUDE,
+		CPP_INCLUDE: TOKEN.CPP_INCLUDE,
+		NAMESPACE: TOKEN.NAMESPACE,
+		ONEWAY: TOKEN.ONEWAY,
+		OPTIONAL: TOKEN.OPTIONAL,
+		SERVICE: TOKEN.SERVICE,
+		STRUCT: TOKEN.STRUCT,
+		THROWS: TOKEN.THROWS,
+		TYPEDEF: TOKEN.TYPEDEF,
 
 		// Containers
-		LIST: {type: "LIST"},
-		MAP: {type: "MAP"},
-		SET: {type: "SET"},
+		LIST: TOKEN.LIST,
+		MAP: TOKEN.MAP,
+		SET: TOKEN.SET,
 
 		// Base types
-		BOOL: {type: "BOOL"},
-		BYTE: {type: "BYTE"},
-		DOUBLE: {type: "DOUBLE"},
-		I16: {type: "I16"},
-		I32: {type: "I32"},
-		I64: {type: "I64"},
-		STRING: {type: "STRING"},
-		VOID: {type: "VOID"},
+		BOOL: TOKEN.BOOL,
+		BYTE: TOKEN.BYTE,
+		I8: TOKEN.I8,
+		I16: TOKEN.I16,
+		I32: TOKEN.I32,
+		I64: TOKEN.I64,
+		DOUBLE: TOKEN.DOUBLE,
+		STRING: TOKEN.STRING,
+		BINARY: TOKEN.BINARY,
+		UUID: TOKEN.UUID,
+		VOID: TOKEN.VOID,
 	};
 
 	/**
@@ -75,6 +78,8 @@ export class Scanner {
 			case ")": this.#addToken("RIGHT_PAREN"); break;
 			case "{": this.#addToken("LEFT_BRACE"); break;
 			case "}": this.#addToken("RIGHT_BRACE"); break;
+			case "<": this.#addToken("LEFT_ANGLE_BRACE"); break;
+			case ">": this.#addToken("RIGHT_ANGLE_BRACE"); break;
 			case ",": this.#addToken("COMMA"); break;
 			case ".": this.#addToken("DOT"); break;
 			case ":": this.#addToken("COLON"); break;

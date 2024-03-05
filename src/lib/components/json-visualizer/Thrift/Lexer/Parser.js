@@ -148,6 +148,13 @@ import { TOKEN } from "./Types.js";
  */
 
 /**
+ * [25] BaseType - Thrift BaseType Object
+ * [25] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid'
+ *
+ * @typedef {string} BaseType
+ */
+
+/**
  * [37] Identifier - Thrift Identifier Object
  * [37] Identifier      ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
  *
@@ -169,8 +176,10 @@ export class Parser {
 	}
 
 	/**
-	* @returns {Document}
-	*/
+	 * [01] Document        ::=  Header* Definition*
+	 *
+	 * @returns {Document}
+	 */
 	parse() {
 		/** @type {Document} */
 		let document = {
@@ -201,6 +210,8 @@ export class Parser {
 	// ==========================
 
 	/**
+	 * [02] Header          ::=  Include | CppInclude | Namespace
+	 *
 	 * @returns {Header}
 	 */
 	#header() {
@@ -230,6 +241,8 @@ export class Parser {
 	}
 
 	/**
+	 * [04] CppInclude      ::=  'cpp_include' Literal
+	 *
 	 * @returns {Namespace}
 	 */
 	#namespace() {
@@ -249,6 +262,8 @@ export class Parser {
 	// ==========================
 
 	/**
+	 * [07] Definition      ::=  Const | Typedef | Enum | Struct | Union | Exception | Service
+	 *
 	 * @returns {Definition}
 	 */
 	#definition() {
@@ -315,6 +330,8 @@ export class Parser {
 	}
 
 	/**
+	 * [09] Typedef         ::=  'typedef' DefinitionType Identifier
+	 *
 	 * @returns {Typedef}
 	 */
 	#typedef() {
@@ -329,6 +346,8 @@ export class Parser {
 	}
 
 	/**
+	 * [10] Enum            ::=  'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
+	 *
 	 * @returns {EnumType}
 	 */
 	#enum() {
@@ -364,6 +383,8 @@ export class Parser {
 	}
 
 	/**
+	 * [11] Struct          ::=  'struct' Identifier 'xsd_all'? '{' Field* '}'
+	 *
 	 * @returns {Struct}
 	 */
 	#struct() {
@@ -378,6 +399,8 @@ export class Parser {
 	}
 
 	/**
+	 * [12] Union          ::=  'union' Identifier 'xsd_all'? '{' Field* '}'
+	 *
 	 * @returns {Union}
 	 */
 	#union() {
@@ -392,6 +415,8 @@ export class Parser {
 	}
 
 	/**
+	 * [13] Exception       ::=  'exception' Identifier '{' Field* '}'
+	 *
 	 * @returns {Exception}
 	 */
 	#exception() {
@@ -406,6 +431,8 @@ export class Parser {
 	}
 
 	/**
+	 * [14] Service         ::=  'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
+	 *
 	 * @returns {Service}
 	 */
 	#service() {
@@ -442,6 +469,8 @@ export class Parser {
 	}
 
 	/**
+	 * [20] Function        ::=  'oneway'? FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+	 *
 	 * @returns {ThriftFunction}
 	 */
 	#function() {
@@ -488,8 +517,8 @@ export class Parser {
 	// ==========================
 
 	/**
-	 * @param {{type: string}} left
-	 * @param {{type: string}} right
+	 * @param {import("./Types.js").tokenType} left
+	 * @param {import("./Types.js").tokenType} right
 	 */
 	#fields(left, right) {
 		/** @type {Field[]} */
@@ -507,6 +536,8 @@ export class Parser {
 	}
 
 	/**
+	 * [15] Field           ::=  FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? XsdFieldOptions ListSeparator?
+	 *
 	 * @returns {Field}
 	 */
 	#field() {
@@ -550,6 +581,21 @@ export class Parser {
 
 
 	// ==========================
+	// MARK: - Types
+	// ==========================
+
+	/**
+	 * [25] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid'
+	 *
+	 * @returns {BaseType}
+	 */
+	#baseType() {
+
+		return null;
+	}
+
+
+	// ==========================
 	// MARK: - Constant Values
 	// ==========================
 
@@ -576,9 +622,14 @@ export class Parser {
 
 
 	// ==========================
-	// MARK: - Basic Types
+	// MARK: - Basic Definitions
 	// ==========================
 
+	/**
+	 * [37] Identifier      ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+	 *
+	 * @returns {string}
+	 */
 	#identifier() {
 		let text = this.#advance().text;
 
@@ -594,7 +645,7 @@ export class Parser {
 	// ==========================
 
 	/**
-	 * @param {{type: string}[]} tokens
+	 * @param {import("./Types.js").tokenType[]} tokens
 	 */
 	#match(...tokens) {
 		tokens.forEach(token =>
@@ -627,7 +678,7 @@ export class Parser {
     }
 
 	/**
-	 * @param {{type: string}} type
+	 * @param {import("./Types.js").tokenType} type
 	 * @param {string} message
 	 */
 	#consume(type, message) {

@@ -5,13 +5,20 @@
 	* @property {any} [literal]
 	*/
 
-/** @type {Object.<string, {type: string}>} */
+/**
+	* @typedef {Object} tokenType
+	* @property {string} type
+	*/
+
+/** @type {Object.<string, tokenType>} */
 export const TOKEN = {
 	// Single-character tokens
 	LEFT_PAREN: {type: "LEFT_PAREN"},
 	RIGHT_PAREN: {type: "RIGHT_PAREN"},
 	LEFT_BRACE: {type: "LEFT_BRACE"},
 	RIGHT_BRACE: {type: "RIGHT_BRACE"},
+	LEFT_ANGLE_BRACE: {type: "LEFT_ANGLE_BRACE"},
+	RIGHT_ANGLE_BRACE: {type: "RIGHT_ANGLE_BRACE"},
 	COMMA: {type: "COMMA"},
 	SEMICOLON: {type: "SEMICOLON"},
 	DOT: {type: "DOT"},
@@ -52,11 +59,14 @@ export const TOKEN = {
 	// Base types
 	BOOL: {type: "BOOL"},
 	BYTE: {type: "BYTE"},
-	DOUBLE: {type: "DOUBLE"},
+	I8: {type: "I8"},
 	I16: {type: "I16"},
 	I32: {type: "I32"},
 	I64: {type: "I64"},
+	DOUBLE: {type: "DOUBLE"},
 	STRING: {type: "STRING"},
+	BINARY: {type: "BINARY"},
+	UUID: {type: "UUID"},
 	VOID: {type: "VOID"},
 
 	EOF: {type: "EOF"}
