@@ -73,7 +73,7 @@ import { TOKEN } from "./Types.js";
  * [09] Typedef         ::=  'typedef' DefinitionType Identifier
  *
  * @typedef {Object} Typedef
- * @property {string} definitionType
+ * @property {DefinitionType} definitionType
  * @property {string} identifier
  */
 
@@ -130,7 +130,7 @@ import { TOKEN } from "./Types.js";
  * @typedef {Object} Field
  * @property {number?} id
  * @property {string?} requiredness
- * @property {string} type
+ * @property {FieldType} type
  * @property {string} identifier
  * @property {any} value
  */
@@ -148,10 +148,56 @@ import { TOKEN } from "./Types.js";
  */
 
 /**
+ * [23] FieldType - Thrift FieldType Object
+ * [23] FieldType       ::=  Identifier | BaseType | ContainerType
+ *
+ * @typedef {Identifier|BaseType|ContainerType} FieldType
+ */
+
+/**
+ * [24] DefinitionType - Thrift DefinitionType Object
+ * [24] DefinitionType  ::=  BaseType | ContainerType
+ *
+ * @typedef {BaseType|ContainerType} DefinitionType
+ */
+
+/**
  * [25] BaseType - Thrift BaseType Object
  * [25] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid'
  *
  * @typedef {string} BaseType
+ */
+
+/**
+ * [26] ContainerType - Thrift ContainerType Object
+ * [26] ContainerType   ::=  MapType | SetType | ListType
+ *
+ * @typedef {MapType|SetType|ListType} ContainerType
+ */
+
+/**
+ * [27] MapType - Thrift ContainerType Object
+ * [27] MapType         ::=  'map' CppType? '<' FieldType ',' FieldType '>'
+ *
+ * @typedef {Object} MapType
+ * @property {FieldType} keyType
+ * @property {FieldType} valueType
+ */
+
+/**
+ * [28] SetType - Thrift ContainerType Object
+ * [28] SetType         ::=  'set' CppType? '<' FieldType '>'
+ *
+ * @typedef {Object} SetType
+ * @property {FieldType} valueType
+ */
+
+/**
+ * [29] ListType - Thrift ContainerType Object
+ * [29] ListType        ::=  'list' CppType? '<' FieldType '>'
+ *
+ * @typedef {Object} ListType
+ * @property {FieldType} valueType
  */
 
 /**
@@ -336,11 +382,11 @@ export class Parser {
 	 */
 	#typedef() {
 		this.#consume(TOKEN.TYPEDEF, "Incorrect typedef definition");
-		const definitionType = this.#advance();
+		const definitionType = this.#definitionType();
 		const identifier = this.#identifier();
 
 		return {
-			definitionType: definitionType.text,
+			definitionType,
 			identifier
 		};
 	}
@@ -543,7 +589,7 @@ export class Parser {
 	#field() {
 		const id = this.#fieldId();
 		const requiredness = this.#fieldReq();
-		const type = this.#advance();
+		const type = this.#fieldType();
 		const identifier = this.#identifier();
 		const value = this.#constValue();
 
@@ -553,7 +599,7 @@ export class Parser {
 		return {
 			id: id?.literal,
 			requiredness: (requiredness) ? requiredness.text : null,
-			type: type.text,
+			type: type,
 			identifier,
 			value: value
 		};
@@ -585,13 +631,183 @@ export class Parser {
 	// ==========================
 
 	/**
+	 * [23] FieldType       ::=  Identifier | BaseType | ContainerType
+	 *
+	 * @returns {FieldType}
+	 */
+	#fieldType() {
+		const baseType = this.#baseType();
+		if (baseType !== null) {
+			return baseType;
+		}
+
+		const containerType = this.#containerType();
+		if (containerType !== null) {
+			return containerType;
+		}
+
+		const identifier = this.#identifier();
+		if (identifier !== null) {
+			return identifier;
+		}
+
+		const token = this.#peek();
+
+		throw this.#error(token.type, `Expected FieldType Token, found ${token.type}!`);
+	}
+
+	/**
+	 * [24] DefinitionType  ::=  BaseType | ContainerType
+	 *
+	 * @returns {DefinitionType}
+	 */
+	#definitionType() {
+		const baseType = this.#baseType();
+		if (baseType !== null) {
+			return baseType;
+		}
+
+		const containerType = this.#containerType();
+		if (containerType !== null) {
+			return containerType;
+		}
+
+		const token = this.#peek();
+
+		throw this.#error(token.type, `Expected DefinitionType Token, found ${token.type}!`);
+	}
+
+	/**
 	 * [25] BaseType        ::=  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid'
 	 *
-	 * @returns {BaseType}
+	 * @returns {BaseType?}
 	 */
 	#baseType() {
+		const token = this.#peek();
+
+		switch (token.type) {
+			case TOKEN.BOOL.type:
+			case TOKEN.BYTE.type:
+			case TOKEN.I8.type:
+			case TOKEN.I16.type:
+			case TOKEN.I32.type:
+			case TOKEN.I64.type:
+			case TOKEN.DOUBLE.type:
+			case TOKEN.STRING.type:
+			case TOKEN.BINARY.type:
+			case TOKEN.UUID.type:
+				return this.#advance().type;
+
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * [26] ContainerType   ::=  MapType | SetType | ListType
+	 *
+	 * @returns {ContainerType?}
+	 */
+	#containerType() {
+		console.warn(`containerType ${this.#peek().type}`);
+		const mapType = this.#mapType();
+		if (mapType !== null) {
+			return mapType;
+		}
+
+		const setType = this.#setType();
+		if (setType !== null) {
+			return setType;
+		}
+
+		const listType = this.#listType();
+		if (listType !== null) {
+			return listType;
+		}
 
 		return null;
+	}
+
+	/**
+	 * [27] MapType         ::=  'map' CppType? '<' FieldType ',' FieldType '>'
+	 *
+	 * @returns {MapType?}
+	 */
+	#mapType() {
+		if (!this.#match(TOKEN.MAP)) {
+			return null;
+		}
+
+		if (!this.#match(TOKEN.LEFT_ANGLE_BRACE)) {
+			throw this.#error(this.#peek().type, `Expected Opening < Token, found ${this.#peek().type}!`);
+		}
+
+		const keyType = this.#fieldType();
+
+		if (!this.#match(TOKEN.COMMA)) {
+			throw this.#error(this.#peek().type, `Expected Comma Token, found ${this.#peek().type}!`);
+		}
+
+		const valueType = this.#fieldType();
+
+		if (!this.#match(TOKEN.RIGHT_ANGLE_BRACE)) {
+			throw this.#error(this.#peek().type, `Expected Closing > Token, found ${this.#peek().type}!`);
+		}
+
+		return {
+			keyType,
+			valueType
+		};
+	}
+
+	/**
+	 * [28] SetType         ::=  'set' CppType? '<' FieldType '>'
+	 *
+	 * @returns {SetType?}
+	 */
+	#setType() {
+		if (!this.#match(TOKEN.SET)) {
+			return null;
+		}
+
+		if (!this.#match(TOKEN.LEFT_ANGLE_BRACE)) {
+			throw this.#error(this.#peek().type, `Expected Opening < Token, found ${this.#peek().type}!`);
+		}
+
+		const valueType = this.#fieldType();
+
+		if (!this.#match(TOKEN.RIGHT_ANGLE_BRACE)) {
+			throw this.#error(this.#peek().type, `Expected Closing > Token, found ${this.#peek().type}!`);
+		}
+
+		return {
+			valueType
+		};
+	}
+
+	/**
+	 * [29] ListType        ::=  'list' CppType? '<' FieldType '>'
+	 *
+	 * @returns {ListType?}
+	 */
+	#listType() {
+		if (!(this.#match(TOKEN.LIST))) {
+			return null;
+		}
+
+		if (!(this.#match(TOKEN.LEFT_ANGLE_BRACE))) {
+			throw this.#error(this.#peek().type, `Expected Opening < Token, found ${this.#peek().type}!`);
+		}
+
+		const valueType = this.#fieldType();
+
+		if (!this.#match(TOKEN.RIGHT_ANGLE_BRACE)) {
+			throw this.#error(this.#peek().type, `Expected Closing > Token, found ${this.#peek().type}!`);
+		}
+
+		return {
+			valueType
+		};
 	}
 
 
@@ -648,14 +864,16 @@ export class Parser {
 	 * @param {import("./Types.js").tokenType[]} tokens
 	 */
 	#match(...tokens) {
-		tokens.forEach(token =>
-			{ if (this.#check(token.type)) {
-                this.#advance();
-                return true;
-            }
-		});
 
-        return false;
+		const matches = tokens
+							.filter(token => this.#check(token.type));
+
+		if (matches.length === 0) {
+			return false;
+		}
+
+		this.#advance();
+		return true;
     }
 
 	/**
