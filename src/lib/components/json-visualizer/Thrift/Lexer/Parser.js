@@ -48,7 +48,7 @@ import { TOKEN } from "./Types.js";
  * [06] NamespaceScope - Thrift Napespace Scope Directive
  * [06] NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'
  *
- * @typedef {Object} NamespaceScope
+ * @typedef {string} NamespaceScope
  */
 
 /**
@@ -287,19 +287,43 @@ export class Parser {
 	}
 
 	/**
-	 * [04] CppInclude      ::=  'cpp_include' Literal
+	 * [05] Namespace       ::=  ( 'namespace' ( NamespaceScope Identifier ) )
 	 *
 	 * @returns {Namespace}
 	 */
 	#namespace() {
 		this.#consume(TOKEN.NAMESPACE, "Incorrect namespace definition");
-		const scope = this.#advance();
+		const scope = this.#namespaceScope();
 		const identifier = this.#identifier();
 
 		return {
-			scope: scope.text,
+			scope,
 			identifier
 		};
+	}
+
+	/**
+	 * [06] NamespaceScope  ::=  '*' | 'c_glib' | 'cpp' | 'delphi' | 'haxe' | 'go' | 'java' | 'js' | 'lua' | 'netstd' | 'perl' | 'php' | 'py' | 'py.twisted' | 'rb' | 'st' | 'xsd'
+	 *
+	 * @returns {NamespaceScope}
+	 */
+	#namespaceScope() {
+		const token = this.#advance();
+
+		switch (token.type) {
+			case TOKEN.IDENTIFIER.type:
+				let scopeName = token.text;
+
+				if (this.#peek().type === TOKEN.DOT.type) {
+					scopeName += this.#advance().text; // Append dot
+					scopeName += this.#advance().text; // Append second identifier
+				}
+				
+				return scopeName;
+
+			default:
+				return '*';
+		}
 	}
 
 
@@ -924,7 +948,7 @@ export class Parser {
 	 * @param {string} message
 	 */
 	#error(type, message) {
-		throw new Error(`Unexpected token: ${type}. ${message}`);
+		throw new Error(`Unexpected token (${this.#current}): ${type}. ${message}`);
 	}
 
 	#isAtEnd() {
