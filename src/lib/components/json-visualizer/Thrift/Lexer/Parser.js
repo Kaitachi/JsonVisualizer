@@ -709,7 +709,6 @@ export class Parser {
 	 * @returns {ContainerType?}
 	 */
 	#containerType() {
-		console.warn(`containerType ${this.#peek().type}`);
 		const mapType = this.#mapType();
 		if (mapType !== null) {
 			return mapType;
@@ -844,12 +843,17 @@ export class Parser {
 	/**
 	 * [37] Identifier      ::=  ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
 	 *
-	 * @returns {string}
+	 * @returns {Identifier}
 	 */
 	#identifier() {
-		let text = this.#advance().text;
+		let text = "";
 
-		while ([TOKEN.DOT.type, TOKEN.IDENTIFIER.type].includes(this.#peek()?.type)) {
+		while (this.#peek().type === TOKEN.IDENTIFIER.type && this.#peekNext()?.type === TOKEN.DOT.type) {
+			text += this.#advance().text;
+			text += this.#advance().text;
+		}
+
+		if (this.#peek().type === TOKEN.IDENTIFIER.type) {
 			text += this.#advance().text;
 		}
 
