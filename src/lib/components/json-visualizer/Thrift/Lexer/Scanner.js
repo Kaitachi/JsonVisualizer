@@ -90,13 +90,13 @@ export class Scanner {
 				if (this.#match("/")) {
 					// Single-line comment
 					while (this.#peek() != "\n" && !this.#isAtEnd()) {
-						console.warn("ignoring character...");
+						// console.warn("ignoring character...");
 						this.#advance();
 					}
 				} else if (this.#match("*")) {
 					// Multiline comment
-					while (this.#peek() != "*" && this.#peekNext() != "/" && !this.#isAtEnd()) {
-						console.warn("ignoring character...");
+					while (!(this.#peek() == "*" && this.#peekNext() == "/") && !this.#isAtEnd()) {
+						// console.warn("ignoring character...");
 						this.#advance();
 					}
 					this.#advance();
