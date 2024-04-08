@@ -10,12 +10,43 @@
 
 	/** @type {string} */
 	export let type = "rec";
+
+	/** @type {string} */
+	let warn = "";
+
+	switch (type) {
+		case "map":
+			if (Object.entries(obj[3]).length != obj[2]) {
+				warn = "MAP COUNT MISMATCH!";
+			}
+			break;
+
+		case "lst":
+			if (obj.length - 2 != obj[1]) {
+				warn = "LIST COUNT MISMATCH!";
+			}
+			break;
+
+		case "set":
+			if (obj.length - 2 != obj[1]) {
+				warn = "SET COUNT MISMATCH!";
+			}
+			break;
+	}
 </script>
 
 
 {#if ["rec", "lst", "map", "set"].includes(type)}
 	<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-separate">
 		<thead class="text-xs text-gray-200 bg-gray-800 dark:bg-neutral-700 dark:text-gray-100">
+			{#if warn}
+				<tr>
+					<th colspan="2"
+						class="px-6 py-3 bg-red-500 text-white">
+						<em>{warn}</em>
+					</th>
+				</tr>
+			{/if}
 			<tr>
 				{#if type === "rec"}
 					{#each Object.entries(obj) as column}
@@ -115,7 +146,8 @@
 					{@const subpath = `${jsonPath}[3]['${key}']` }
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
-						<th class="px-6 py-4">
+						<th scope="row"
+							class="px-6 py-4">
 							{key}
 						</th>
 						<td class="px-6 py-4"
@@ -138,7 +170,8 @@
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
-						<th class="px-6 py-4">
+						<th scope="row"
+							class="px-6 py-4">
 							{i}
 						</th>
 						<td class="px-6 py-4"
@@ -162,7 +195,8 @@
 					{@const subpath = `${jsonPath}[${i+2}]`}
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
-						<th class="px-6 py-4">
+						<th scope="row"
+							class="px-6 py-4">
 							{i}
 						</th>
 						<td class="px-6 py-4"
