@@ -1,5 +1,5 @@
 <script>
-	import ThriftObjectDisplay from '$components/json-visualizer/Thrift/ThriftObjectDisplay.svelte';
+	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
 	import { thriftServices, selectedThriftService, payload  } from '../stores';
 
 </script>

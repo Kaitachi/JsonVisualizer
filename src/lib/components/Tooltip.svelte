@@ -3,8 +3,8 @@
 	/** @type {string} */
 	export let hint;
 	
-	/** @type {any} */
-	export let props;
+	/** @type {any?} */
+	export let props = {};
 </script>
 
 {#if hint}

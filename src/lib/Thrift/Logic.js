@@ -1,5 +1,7 @@
+// TODO: Don't really enjoy the place nor the contents of this file... =/
+
 import { browser } from "$app/environment";
-import { THRIFT } from '$components/json-visualizer/Thrift/Types';
+import { THRIFT } from './Types.js';
 
 	/**
 	 * Updates payload with given change details

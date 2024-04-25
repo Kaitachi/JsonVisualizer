@@ -1,7 +1,7 @@
 <script>
-	import { payload } from "../../../../stores";
-	import Tooltip from "../Common/tooltip.svelte";
-	import { update } from "./Logic.js";
+	import { payload } from "../../stores";
+	import Tooltip from "./Tooltip.svelte";
+	import { update } from "../Thrift/Logic.js";
 	import InPlaceEdit from "./InPlaceEdit.svelte";
 
 

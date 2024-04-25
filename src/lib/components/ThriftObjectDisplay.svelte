@@ -1,8 +1,8 @@
 <script>
-	import { fromLocalStorage, thriftServices } from "../../../../stores.js";
-	import { loadService } from "./Lexer/main.js";
-	import { THRIFT } from "./Types.js";
-	import { getLocalStorageServices } from "./Logic.js";
+	import { fromLocalStorage, thriftServices } from "../../stores.js";
+	import { load } from "../Thrift/IDL/main.js";
+	import { THRIFT } from "../Thrift/Types.js";
+	import { getLocalStorageServices } from "../Thrift/Logic.js";
 	import Table from "./Table.svelte";
 
 	/** @type {string} */
@@ -24,7 +24,7 @@
 	let errorMessage = "";
 
 	const source = fromLocalStorage(`thrift.services.${service}`, "");
-	const serviceJson = loadService(source);
+	const serviceJson = load(source);
 
 	console.log({serviceJson});
 
