@@ -52,6 +52,4 @@ function syncWritable(key, fallback) {
 }
 
 export const payload = syncWritable("payload", "");
-export const thriftServices = syncWritable("thrift.services", []);
-export const selectedThriftService = syncWritable("thrift.selected", "");
 

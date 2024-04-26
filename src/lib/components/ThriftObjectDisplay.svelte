@@ -1,12 +1,10 @@
 <script>
-	import { fromLocalStorage, thriftServices } from "../../stores.js";
 	import { load } from "../Thrift/IDL/main.js";
 	import { THRIFT } from "../Thrift/Types.js";
-	import { getLocalStorageServices } from "../Thrift/Logic.js";
 	import Table from "./Table.svelte";
 
 	/** @type {string} */
-	export let service;
+	export let source;
 
 	/** @type {string} */
 	export let json;
@@ -23,12 +21,7 @@
 	/** @type {string} */
 	let errorMessage = "";
 
-	const source = fromLocalStorage(`thrift.services.${service}`, "");
-	const serviceJson = load(source);
-
-	console.log({serviceJson});
-
-	$thriftServices = getLocalStorageServices();
+	$: console.log(load(source));
 
 	$: {
 		try {

@@ -1,30 +1,28 @@
 <script>
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
-	import { thriftServices, selectedThriftService, payload  } from '../stores';
+	import { payload } from '../stores';
 
+	let source = "";
 </script>
 
 <main>
 	<h1 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 md:text-3xl">Thrift Message Visualizer</h1>
 
 	<form class="my-6">
-		<fieldset class="flex">
-			<div class="flex flex-col w-1/3 text-sm mb-2">
-				<label for="selectedThriftService" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
-				<select bind:value={$selectedThriftService} name="selectedThriftService">
-					<option disabled value="">- Select a service... -</option>
-					{#if $thriftServices}
-						{#each $thriftServices as service }
-							<option value="{service}">{service}</option>
-						{/each}
-					{/if}
-				</select>
-			</div>
-			<div class="flex flex-col w-2/3 text-sm mb-2 ml-5">
-				<!--<span class="font-bold mb-2 text-gray-800 dark:text-gray-100">Edit Thrift Files...</span>-->
-			</div>
-		</fieldset>
 		<fieldset>
+			<details>
+				<summary class="text-slate-900 dark:text-gray-100 font-semibold select-none cursor-pointer">
+					Add Thrift Definition File
+				</summary>
+				<div class="flex flex-col text-sm mb-2">
+					<label for="source" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
+					<textarea bind:value={source} name="source" rows="12"
+						class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
+					></textarea>
+				</div>
+			</details>
+		</fieldset>
+		<fieldset class="mt-6">
 			<div class="flex flex-col text-sm mb-2">
 				<label for="payload" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Message</label>
 				<textarea bind:value={$payload} name="payload" rows="8"
@@ -38,7 +36,8 @@
 	
 	<p>
 	{#if $payload}
-		<ThriftObjectDisplay service={$selectedThriftService} json={$payload} />
+		{source}
+		<ThriftObjectDisplay source={source} json={$payload} />
 	{/if}
 	</p>
 </main>

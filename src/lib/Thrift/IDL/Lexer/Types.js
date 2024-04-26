@@ -23,6 +23,7 @@ export const TOKEN = {
 	SEMICOLON: {type: "SEMICOLON"},
 	DOT: {type: "DOT"},
 	COLON: {type: "COLON"},
+	STAR: {type: "STAR"},
 
 	// One or two-character tokens
 	EQUAL: {type: "EQUAL"},

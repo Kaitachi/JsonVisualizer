@@ -85,6 +85,7 @@ export class Scanner {
 			case ":": this.#addToken("COLON"); break;
 			case ";": this.#addToken("SEMICOLON"); break;
 			case "=": this.#addToken("EQUAL"); break;
+			case "*": this.#addToken("STAR"); break;
 
 			case "/":
 				if (this.#match("/")) {
@@ -123,7 +124,7 @@ export class Scanner {
 				} else if (this.#isAlpha(c)) {
 					this.#identifier();
 				} else {
-					console.error(`> Unexpected character: >${c}< unicode >${c.charCodeAt(0)}<.`);
+					console.error(`> Unexpected character: >${c}< unicode >${c.charCodeAt(0)}< (line ${this.#line} - context: ${this.#source.substr(this.#current-20, 40)}).`);
 				}
 				break;
 		}
