@@ -36,7 +36,6 @@
 	
 	<p>
 	{#if $payload}
-		{source}
 		<ThriftObjectDisplay source={source} json={$payload} />
 	{/if}
 	</p>

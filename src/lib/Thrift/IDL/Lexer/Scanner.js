@@ -85,8 +85,17 @@ export class Scanner {
 			case ":": this.#addToken("COLON"); break;
 			case ";": this.#addToken("SEMICOLON"); break;
 			case "=": this.#addToken("EQUAL"); break;
+			case "+": this.#addToken("PLUS"); break;
+			case "-": this.#addToken("DASH"); break;
 			case "*": this.#addToken("STAR"); break;
 
+			// Literals
+			case "'":
+			case "\"":
+				this.#literal(c);
+				break;
+
+			// Comments
 			case "/":
 				if (this.#match("/")) {
 					// Single-line comment
@@ -104,6 +113,13 @@ export class Scanner {
 					this.#advance();
 				}
 				break;
+
+			case "#":
+				// Single-line comment
+				while (this.#peek() != "\n" && !this.#isAtEnd()) {
+					// console.warn("ignoring character...");
+					this.#advance();
+				}
 
 			// Whitespaces
 			case " ":
@@ -135,6 +151,15 @@ export class Scanner {
 	// MARK: - Identifier Methods
 	// ==========================
 	
+	/**
+	 * @param {string} c
+	 */
+	#literal(c) {
+		while (!this.#match(c)) this.#advance();
+
+		this.#addToken("LITERAL", this.#source.substring(this.#start, this.#current));
+	}
+
 	#identifier() {
 		while (this.#isAlphaNumeric(this.#peek())) this.#advance();
 

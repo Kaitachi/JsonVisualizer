@@ -15,6 +15,8 @@ export const TOKEN = {
 	// Single-character tokens
 	LEFT_PAREN: {type: "LEFT_PAREN"},
 	RIGHT_PAREN: {type: "RIGHT_PAREN"},
+	LEFT_BRACKET: {type: "LEFT_BRACKET"},
+	RIGHT_BRACKET: {type: "RIGHT_BRACKET"},
 	LEFT_BRACE: {type: "LEFT_BRACE"},
 	RIGHT_BRACE: {type: "RIGHT_BRACE"},
 	LEFT_ANGLE_BRACE: {type: "LEFT_ANGLE_BRACE"},
@@ -23,7 +25,11 @@ export const TOKEN = {
 	SEMICOLON: {type: "SEMICOLON"},
 	DOT: {type: "DOT"},
 	COLON: {type: "COLON"},
+	PLUS: {type: "PLUS"},
+	DASH: {type: "DASH"},
 	STAR: {type: "STAR"},
+	SINGLE_QUOTE: {type: "SINGLE_QUOTE"},
+	DOUBLE_QUOTE: {type: "DOUBLE_QUOTE"},
 
 	// One or two-character tokens
 	EQUAL: {type: "EQUAL"},
@@ -32,6 +38,7 @@ export const TOKEN = {
 	STAR_SLASH: {type: "STAR_SLASH"},
 
 	// Literals
+	LITERAL: {type: "LITERAL"},
 	IDENTIFIER: {type: "IDENTIFIER"},
 	NUMBER: {type: "NUMBER"},
 

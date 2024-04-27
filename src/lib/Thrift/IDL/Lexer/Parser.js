@@ -66,6 +66,9 @@ import { TOKEN } from "./Types.js";
  * [08] Const           ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
  *
  * @typedef {Object} Const
+ * @property {FieldType} type
+ * @property {string} identifier
+ * @property {ConstValue} value
  */
 
 /**
@@ -83,7 +86,7 @@ import { TOKEN } from "./Types.js";
  *
  * @typedef {Object} EnumType
  * @property {string} identifier
- * @property {Object.<string, any>} enumerators
+ * @property {Object.<string, IntConstant>} enumerators
  */
 
 /**
@@ -119,7 +122,7 @@ import { TOKEN } from "./Types.js";
  *
  * @typedef {Object} Service
  * @property {string} identifier
- * @property {string} extending
+ * @property {string?} extending
  * @property {ThriftFunction[]} functions
  */
 
@@ -132,7 +135,7 @@ import { TOKEN } from "./Types.js";
  * @property {string?} requiredness
  * @property {FieldType} type
  * @property {string} identifier
- * @property {any} value
+ * @property {ConstValue} value
  */
 
 /**
@@ -142,9 +145,16 @@ import { TOKEN } from "./Types.js";
  * @typedef {Object} ThriftFunction
  * @property {string?} oneway
  * @property {string} identifier
- * @property {string} returns
+ * @property {FieldType} returns
  * @property {Field[]} fields
  * @property {Field[]?} throws
+ */
+
+/**
+ * [21] FunctionType - Thrift FunctionType Object
+ * [21] FunctionType    ::=  FieldType | 'void'
+ *
+ * @typedef {FieldType|string} FunctionType
  */
 
 /**
@@ -198,6 +208,48 @@ import { TOKEN } from "./Types.js";
  *
  * @typedef {Object} ListType
  * @property {FieldType} valueType
+ */
+
+/**
+ * [31] ConstValue - Thrift ConstValue Object
+ * [31] ConstValue      ::=  IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
+ *
+ * @typedef {IntConstant|DoubleConstant|Literal|Identifier|ConstList|ConstMap} ConstValue
+ */
+
+/**
+ * [32] IntConstant - Thrift IntConstant Object
+ * [32] IntConstant     ::=  ('+' | '-')? Digit+
+ *
+ * @typedef {Number} IntConstant
+ */
+
+/**
+ * [33] DoubleConstant - Thrift DoubleConstant Object
+ * [33] DoubleConstant  ::=  ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
+ *
+ * @typedef {Number} DoubleConstant
+ */
+
+/**
+ * [34] ConstList - Thrift ConstList Object
+ * [34] ConstList       ::=  '[' (ConstValue ListSeparator?)* ']'
+ *
+ * @typedef {ConstValue[]} ConstList
+ */
+
+/**
+ * [35] ConstMap - Thrift ConstMap Object
+ * [35] ConstMap        ::=  '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+ *
+ * @typedef {Object.<ConstValue, ConstValue>} ConstMap
+ */
+
+/**
+ * [36] Literal - Thrift Literal Object
+ * [36] Literal         ::=  ('"' [^"]* '"') | ("'" [^']* "'")
+ *
+ * @typedef {string} Literal
  */
 
 /**
@@ -341,8 +393,12 @@ export class Parser {
 
 		switch (token.type) {
 			case TOKEN.CONST.type:
-				// TODO: Parse CONST type!
-				throw this.#error(token.type, `Definition token ${token.type} not supported!`);
+				const constType = this.#const();
+				return {
+					type: TOKEN.ENUM.type,
+					name: constType.identifier,
+					definition: constType
+				};
 
 			case TOKEN.TYPEDEF.type:
 				const typedef = this.#typedef();
@@ -353,7 +409,6 @@ export class Parser {
 				};
 
 			case TOKEN.ENUM.type:
-				// TODO: Parse ENUM type!
 				const enumType = this.#enum();
 				return {
 					type: TOKEN.ENUM.type,
@@ -400,12 +455,35 @@ export class Parser {
 	}
 
 	/**
+	 * [08] Const           ::=  'const' FieldType Identifier '=' ConstValue ListSeparator?
+	 *
+	 * @returns {Const}
+	 */
+	#const() {
+		this.#consume(TOKEN.CONST, "Incorrect const definition");
+
+		const type = this.#fieldType();
+		const identifier = this.#identifier();
+
+		this.#consume(TOKEN.EQUAL, "Incorrect const definition, expected equals sign");
+
+		const value = this.#constValue();
+
+		return {
+			type,
+			identifier,
+			value
+		};
+	}
+
+	/**
 	 * [09] Typedef         ::=  'typedef' DefinitionType Identifier
 	 *
 	 * @returns {Typedef}
 	 */
 	#typedef() {
 		this.#consume(TOKEN.TYPEDEF, "Incorrect typedef definition");
+
 		const definitionType = this.#definitionType();
 		const identifier = this.#identifier();
 
@@ -421,21 +499,25 @@ export class Parser {
 	 * @returns {EnumType}
 	 */
 	#enum() {
+		this.#consume(TOKEN.ENUM, "Incorrect enum definition");
 		const identifier = this.#identifier();
-		/** @type {Object.<string, any>} */
+
+		/** @type {Object.<string, IntConstant>} */
 		const enumerators = {};
+		let value = 0;
 
 		this.#consume(TOKEN.LEFT_BRACE, "[#enum] Expected opening brace");
 
 		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
 			const enumerator = this.#identifier();
-			let value = null;
 			
 			if (this.#peek().type === TOKEN.EQUAL.type) {
 				// Swallow equals sign
 				this.#advance();
 
 				value = this.#intConstant();
+			} else {
+				value++;
 			}
 
 			// Swallow list separator
@@ -508,13 +590,18 @@ export class Parser {
 	#service() {
 		this.#consume(TOKEN.SERVICE, "Incorrect service definition");
 		const identifier = this.#identifier();
-		const extending = "";
+		let extending = null;
+
+		if (this.#peek().type === TOKEN.IDENTIFIER.type) {
+			extending = this.#identifier();
+		}
+
 		const functions = this.#functions();
 
 		return {
 			identifier,
-			extending: extending,
-			functions: functions
+			extending,
+			functions
 		};
 	}
 
@@ -545,7 +632,7 @@ export class Parser {
 	 */
 	#function() {
 		const oneway = this.#oneway();
-		const functionType = this.#advance();
+		const functionType = this.#functionType();
 		const identifier = this.#identifier();
 		const fields = this.#fields(TOKEN.LEFT_PAREN, TOKEN.RIGHT_PAREN);
 		const throws = this.#throws();
@@ -556,7 +643,7 @@ export class Parser {
 		return {
 			oneway: (oneway) ? oneway.text : null,
 			identifier,
-			returns: functionType.text,
+			returns: functionType,
 			fields: fields,
 			throws: throws
 		};
@@ -615,7 +702,13 @@ export class Parser {
 		const requiredness = this.#fieldReq();
 		const type = this.#fieldType();
 		const identifier = this.#identifier();
-		const value = this.#constValue();
+		let value = null;
+
+		if (this.#peek().type === TOKEN.EQUAL.type) {
+			// Swallow equals sign
+			this.#advance();
+			value = this.#constValue();
+		}
 
 		// Swallow list separator
 		this.#listSeparator();
@@ -653,6 +746,19 @@ export class Parser {
 	// ==========================
 	// MARK: - Types
 	// ==========================
+
+	/**
+	 * [21] FunctionType    ::=  FieldType | 'void'
+	 *
+	 * @returns {FunctionType}
+	 */
+	#functionType() {
+		if (this.#peek().type === TOKEN.VOID.type) {
+			return this.#advance().type;
+		}
+
+		return this.#fieldType();
+	}
 
 	/**
 	 * [23] FieldType       ::=  Identifier | BaseType | ContainerType
@@ -838,17 +944,164 @@ export class Parser {
 	// MARK: - Constant Values
 	// ==========================
 
+	/**
+	 * [31] ConstValue      ::=  IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
+	 *
+	 * @returns {ConstValue}
+	 */
 	#constValue() {
-		// TODO: Parse CONSTVALUE type!
-		return null;
-	}
+		const token = this.#peek();
 
-	#intConstant() {
-		if (this.#peek().type === TOKEN.NUMBER.type) {
-			return +this.#advance().text;
+		switch (token.type) {
+			case TOKEN.LEFT_BRACKET.type:
+				return this.#constList();
+			
+			case TOKEN.LEFT_BRACE.type:
+				return this.#constMap();
+
+			case TOKEN.DASH.type:
+			case TOKEN.PLUS.type:
+			case TOKEN.NUMBER.type:
+			case TOKEN.DOT.type:
+				return this.#doubleConstant();
+
+			case TOKEN.LITERAL.type:
+				return this.#advance();
 		}
 
-		return null;
+		throw this.#error(token.type, `Expected constValue Token, found ${token.type}!`);
+	}
+
+	/**
+	 * [32] IntConstant     ::=  ('+' | '-')? Digit+
+	 *
+	 * @returns {IntConstant}
+	 */
+	#intConstant() {
+		if (this.#peek().type !== TOKEN.NUMBER.type && (this.#peekNext()?.type !== TOKEN.NUMBER.type)) {
+			throw this.#error(this.#peek().type, `Expected Number Token, found ${this.#peek().type}!`);
+		}
+
+		let sign = 1;
+
+		if (this.#peek().type === TOKEN.DASH.type) {
+			// Swallow sign
+			this.#advance()
+			sign = -1;
+		} else if (this.#peek().type === TOKEN.PLUS.type) {
+			// Swallow sign
+			this.#advance()
+		}
+
+		return sign * +this.#advance().text;
+	}
+
+	/**
+	 * [33] DoubleConstant  ::=  ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
+	 *
+	 * @returns {DoubleConstant}
+	 */
+	#doubleConstant() {
+		if (this.#peek().type !== TOKEN.NUMBER.type && (this.#peekNext()?.type !== TOKEN.NUMBER.type)) {
+			// NOTE: Heavily relying on this value not being something like `-e5` or something crazy like this...
+			throw this.#error(this.#peek().type, `Expected Number Token, found ${this.#peek().type}!`);
+		}
+
+		let sign = 1;
+
+		if (this.#peek().type === TOKEN.DASH.type) {
+			// Swallow sign
+			this.#advance()
+			sign = -1;
+		} else if (this.#peek().type === TOKEN.PLUS.type) {
+			// Swallow sign
+			this.#advance()
+		}
+
+		let whole = 0;
+		let decimal = 0;
+		let exp = 0;
+
+		// Grab integer part
+		if (this.#peek().type === TOKEN.NUMBER.type) {
+			whole = +this.#advance().text;
+		}
+
+		// Grab decimal part
+		if (this.#peek().type === TOKEN.DOT.type) {
+			// Swallow dot
+			this.#advance();
+
+			if (this.#peek().type === TOKEN.NUMBER.type) {
+				decimal = +this.#advance().text;
+			}
+		}
+
+		// Grab exponent part
+		if (this.#peek().type === TOKEN.IDENTIFIER.type) {
+			if (this.#peek().text.toLowerCase() === "e") {
+				// Swallow exponent symbol
+				this.#advance();
+
+				if (this.#peek().type === TOKEN.NUMBER.type) {
+					exp = +this.#advance().text;
+				}
+			}
+		}
+
+		return Number(`${sign * whole}.${decimal}e${exp}`);
+	}
+
+	/**
+	 * [34] ConstList       ::=  '[' (ConstValue ListSeparator?)* ']'
+	 *
+	 * @returns {ConstList?}
+	 */
+	#constList() {
+		/** @type {ConstValue[]} */
+		const constValues = [];
+
+		this.#consume(TOKEN.LEFT_BRACKET, "[#constList] Expected opening brace");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACKET.type) {
+			constValues.push(this.#constValue());
+
+			// Swallow list separator
+			this.#listSeparator();
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACKET, "[#constList] Expected closing brace");
+
+		return constValues;
+	}
+
+	/**
+	 * [35] ConstMap        ::=  '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+	 *
+	 * @returns {ConstMap?}
+	 */
+	#constMap() {
+		/** @type {ConstMap} */
+		const constMapValues = {};
+
+		this.#consume(TOKEN.LEFT_BRACE, "[#constMap] Expected opening brace");
+
+		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
+			const key = this.#constValue();
+
+			this.#consume(TOKEN.COLON, "[#constMap] Expected key-value colon separator");
+
+			const value = this.#constValue();
+
+			constMapValues[key.text] = value;
+
+			// Swallow list separator
+			this.#listSeparator();
+		}
+
+		this.#consume(TOKEN.RIGHT_BRACE, "[#constMap] Expected closing brace");
+
+		return constMapValues;
 	}
 
 	#listSeparator() {
