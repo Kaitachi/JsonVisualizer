@@ -53,6 +53,22 @@
 		return (field) ? `: ${field}` : "";
 	}
 
+	/**
+	 * @param {string} index
+	 * @returns {string}
+	 */
+	function fieldType(index) {
+		if (!thriftFields.length) {
+			return "";
+		}
+
+		let t = thriftFields
+				.find(field => field.id === +index)
+				?.type;
+
+		return (t) ? ` - type ${t}` : "";
+	}
+
 	console.warn(`>>>> Table.svelte received fields`);
 	console.warn({thriftFields});
 </script>
@@ -82,7 +98,7 @@
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
 							{column[0]}{fieldName(column[0])}
-							<em>({cell_type_name})</em>
+							<em>({cell_type_name}{fieldType(column[0])})</em>
 						</th>
 					{/each}
 				{:else if type === "map"}
