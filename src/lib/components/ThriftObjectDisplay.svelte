@@ -81,7 +81,12 @@
 
 					// TODO: Show fields for response-type objects!
 					case THRIFT.MESSAGE.RESPONSE:
-						fields = [];
+						// Add fields found in throws section of signature
+						fields = selectedFunction?.throws ?? [];
+
+						// Add return object with id of 0
+						const returns = selectedFunction?.returns;
+						fields.push({ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: "RESPONSE", value: null });
 						break;
 				}
 			}
