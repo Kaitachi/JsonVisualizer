@@ -53,3 +53,12 @@ function syncWritable(key, fallback) {
 
 export const payload = syncWritable("payload", "");
 
+/** @type {import("svelte/store").Writable<string>} */
+export const thisSource = writable("");
+
+/** @type {import("svelte/store").Writable<import("$lib/Thrift/IDL/Lexer/Parser.js").Document?>} */
+export const thisDocument = writable(null);
+
+/** @type {import("svelte/store").Writable<import("$lib/Thrift/IDL/Lexer/Parser.js").Service?>} */
+export const thisService = writable(null);
+

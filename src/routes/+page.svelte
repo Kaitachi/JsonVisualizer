@@ -1,8 +1,11 @@
 <script>
+	import ThriftDocument from '$components/ThriftDocument.svelte';
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
-	import { payload } from '../stores';
+	import { payload, thisSource } from '../stores';
 
 	let source = "";
+
+	$: thisSource.set(source);
 </script>
 
 <main>
@@ -34,9 +37,9 @@
 
 	<hr />
 	
-	<p>
+	<ThriftDocument />
+
 	{#if $payload}
-		<ThriftObjectDisplay source={source} json={$payload} />
+		<ThriftObjectDisplay json={$payload} />
 	{/if}
-	</p>
 </main>

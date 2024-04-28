@@ -1,17 +1,10 @@
 <script>
-	import { load } from "../Thrift/IDL/main.js";
-	import { TOKEN } from "../Thrift/IDL/Lexer/Tokens.js";
+	import { thisService } from "../../stores.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
 	/** @type {string} */
-	export let source;
-
-	/** @type {string} */
 	export let json;
-
-	/** @type {string} */
-	export let service;
 
 	/** @type {string} */
 	let jsonPath = "$[4]";
@@ -24,12 +17,6 @@
 
 	/** @type {string} */
 	let errorMessage = "";
-
-	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Document?} */
-	let loadedDoc = null;
-
-	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} */
-	let selectedService = null;
 
 	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
 	let fields = [];
@@ -50,48 +37,47 @@
 		}
 	}
 
-	$: {
-		if (source) {
-			loadedDoc = load(source);
-			console.log(loadedDoc);
-
-			let definitions = Object.values(loadedDoc.definitions);
-
-			let services = definitions
-					.filter(def => def.type === TOKEN.SERVICE.type);
-
-			// FIXME: Is there any way to correctly filter mixed arrays on jsdoc?
-			if (services.length === 1) {
-				selectedService = services[0].definition;
-			} else {
-				selectedService = services
-					.filter(svc => svc.name === service)[0].definition;
-			}
-
-			console.log({selectedService});
-
-			if (isThriftMessage) {
-				let selectedFunction = selectedService?.functions
-					.find(f => f.identifier.toLowerCase() === jsonObject[THRIFT.FIELDS.ENDPOINT].toLowerCase());
-
-				switch (jsonObject[THRIFT.FIELDS.MESSAGE]) {
-					case THRIFT.MESSAGE.REQUEST:
-						fields = selectedFunction?.fields ?? [];
-						break;
-
-					// TODO: Show fields for response-type objects!
-					case THRIFT.MESSAGE.RESPONSE:
-						// Add fields found in throws section of signature
-						fields = selectedFunction?.throws ?? [];
-
-						// Add return object with id of 0
-						const returns = selectedFunction?.returns;
-						fields.push({ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: "RESPONSE", value: null });
-						break;
-				}
-			}
+	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} svc 
+	 * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
+	 */
+	function getFields(svc) {
+		console.error("> fetching fields from service...");
+		if (!svc) {
+			return [];
 		}
+
+		let func = svc.functions
+					.find(f => f.identifier.toLowerCase() === jsonObject[THRIFT.FIELDS.ENDPOINT].toLowerCase())
+
+		if (!func) {
+			return [];
+		}
+
+		switch (jsonObject[THRIFT.FIELDS.MESSAGE]) {
+			case THRIFT.MESSAGE.REQUEST:
+				return func.fields ?? [];
+
+				// TODO: Show fields for response-type objects!
+			case THRIFT.MESSAGE.RESPONSE:
+				// Add return object with id of 0
+				const returns = func.returns;
+
+				/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
+				let f = [{ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: "RESPONSE", value: null }];
+
+				// Add fields found in throws section of signature
+				if (func.throws) {
+					f.push(...func.throws);
+				}
+				return f;
+		}
+
+		return [];
 	}
+
+	$: fields = getFields($thisService);
+	$: console.log({fields});
 </script>
 
 {#if isThriftMessage}
@@ -135,7 +121,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields}/>
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} />
 	</div>
 {:else}
 	<div role="alert">
