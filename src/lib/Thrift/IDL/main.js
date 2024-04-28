@@ -4,7 +4,7 @@ import { Parser } from "./Lexer/Parser.js";
 /**
  * Transform given source string to JSON-ified Thrift service.
  * @param {string} source - source file to be parsed
- * @returns {any} JSON object with Service definition
+ * @returns {import("./Lexer/Parser.js").Document} JSON object with Service definition
  */
 export function load(source) {
 	const scanner = new Scanner(source);
@@ -18,6 +18,6 @@ export function load(source) {
 
 	console.warn("DONE PARSE");
 
-	return {tree};
+	return tree;
 }
 

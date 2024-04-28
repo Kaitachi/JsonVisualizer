@@ -11,6 +11,9 @@
 	/** @type {string} */
 	export let type = "rec";
 
+	/** @type {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} */
+	export let thriftFields = [];
+
 	/** @type {string} */
 	let warn = "";
 
@@ -33,6 +36,25 @@
 			}
 			break;
 	}
+
+	/**
+	 * @param {string} index
+	 * @returns {string}
+	 */
+	function fieldName(index) {
+		if (!thriftFields.length) {
+			return "";
+		}
+
+		let field = thriftFields
+				.find(field => field.id === +index)
+				?.identifier;
+
+		return (field) ? `: ${field}` : "";
+	}
+
+	console.warn(`>>>> Table.svelte received fields`);
+	console.warn({thriftFields});
 </script>
 
 
@@ -54,11 +76,12 @@
 						{@const subpath = `${jsonPath}[${column[0]}]`}
 						{@const cell_type_name = THRIFT.DATA_TYPES[cell_type].name}
 
+
 						<th scope="col"
 							class="px-6 py-3"
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
-							{column[0]}
+							{column[0]}{fieldName(column[0])}
 							<em>({cell_type_name})</em>
 						</th>
 					{/each}

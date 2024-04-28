@@ -1,8 +1,8 @@
 /**
 	* @typedef {Object} token
 	* @property {string} type
-	* @property {string} text
-	* @property {any} [literal]
+	* @property {string?} [text]
+	* @property {(string|number)?} [literal]
 	*/
 
 /**

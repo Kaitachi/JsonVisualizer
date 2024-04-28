@@ -1,4 +1,4 @@
-import { TOKEN } from "./Types.js";
+import { TOKEN } from "./Tokens.js";
 
 // https://thrift.apache.org/docs/idl
 
@@ -263,11 +263,11 @@ export class Parser {
 
 	#current = 0;
 
-	/** @type {import("./Types.js").token[]} */
+	/** @type {import("./Tokens.js").token[]} */
 	#tokens = [];
 
 	/**
-	 * @param {import("./Types.js").token[]} tokens
+	 * @param {import("./Tokens.js").token[]} tokens
 	 */
 	constructor(tokens) {
 		this.#tokens = tokens;
@@ -287,6 +287,8 @@ export class Parser {
 
 		while (!this.#isAtEnd()) {
 			switch (this.#peek().type) {
+				case TOKEN.INCLUDE.type:
+				case TOKEN.CPP_INCLUDE.type:
 				case TOKEN.NAMESPACE.type:
 					const header = this.#header();
 					document.headers[header.name] = header;
@@ -468,6 +470,9 @@ export class Parser {
 		this.#consume(TOKEN.EQUAL, "Incorrect const definition, expected equals sign");
 
 		const value = this.#constValue();
+
+		// Swallow list separator
+		this.#listSeparator();
 
 		return {
 			type,
@@ -661,7 +666,7 @@ export class Parser {
 	 * @returns {Field[]?}
 	 */
 	#throws() {
-		if (this.#peekNext()?.type === TOKEN.THROWS.type) {
+		if (this.#peek()?.type === TOKEN.THROWS.type) {
 			this.#consume(TOKEN.THROWS, "Incorrect throws definition");
 			return this.#fields(TOKEN.LEFT_PAREN, TOKEN.RIGHT_PAREN);
 		}
@@ -674,8 +679,8 @@ export class Parser {
 	// ==========================
 
 	/**
-	 * @param {import("./Types.js").tokenType} left
-	 * @param {import("./Types.js").tokenType} right
+	 * @param {import("./Tokens.js").tokenType} left
+	 * @param {import("./Tokens.js").tokenType} right
 	 */
 	#fields(left, right) {
 		/** @type {Field[]} */
@@ -1142,7 +1147,7 @@ export class Parser {
 	// ==========================
 
 	/**
-	 * @param {import("./Types.js").tokenType[]} tokens
+	 * @param {import("./Tokens.js").tokenType[]} tokens
 	 */
 	#match(...tokens) {
 
@@ -1177,7 +1182,7 @@ export class Parser {
     }
 
 	/**
-	 * @param {import("./Types.js").tokenType} type
+	 * @param {import("./Tokens.js").tokenType} type
 	 * @param {string} message
 	 */
 	#consume(type, message) {

@@ -1,5 +1,6 @@
 <script>
 	import { load } from "../Thrift/IDL/main.js";
+	import { TOKEN } from "../Thrift/IDL/Lexer/Tokens.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
@@ -8,6 +9,9 @@
 
 	/** @type {string} */
 	export let json;
+
+	/** @type {string} */
+	export let service;
 
 	/** @type {string} */
 	let jsonPath = "$[4]";
@@ -21,7 +25,14 @@
 	/** @type {string} */
 	let errorMessage = "";
 
-	$: console.log(load(source));
+	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Document?} */
+	let loadedDoc = null;
+
+	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} */
+	let selectedService = null;
+
+	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
+	let fields = [];
 
 	$: {
 		try {
@@ -36,6 +47,44 @@
 			isThriftMessage = false;
 			jsonObject = null;
 			errorMessage = String(error);
+		}
+	}
+
+	$: {
+		if (source) {
+			loadedDoc = load(source);
+			console.log(loadedDoc);
+
+			let definitions = Object.values(loadedDoc.definitions);
+
+			let services = definitions
+					.filter(def => def.type === TOKEN.SERVICE.type);
+
+			// FIXME: Is there any way to correctly filter mixed arrays on jsdoc?
+			if (services.length === 1) {
+				selectedService = services[0].definition;
+			} else {
+				selectedService = services
+					.filter(svc => svc.name === service)[0].definition;
+			}
+
+			console.log({selectedService});
+
+			if (isThriftMessage) {
+				let selectedFunction = selectedService?.functions
+					.find(f => f.identifier.toLowerCase() === jsonObject[THRIFT.FIELDS.ENDPOINT].toLowerCase());
+
+				switch (jsonObject[THRIFT.FIELDS.MESSAGE]) {
+					case THRIFT.MESSAGE.REQUEST:
+						fields = selectedFunction?.fields ?? [];
+						break;
+
+					// TODO: Show fields for response-type objects!
+					case THRIFT.MESSAGE.RESPONSE:
+						fields = [];
+						break;
+				}
+			}
 		}
 	}
 </script>
@@ -81,7 +130,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath}/>
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields}/>
 	</div>
 {:else}
 	<div role="alert">

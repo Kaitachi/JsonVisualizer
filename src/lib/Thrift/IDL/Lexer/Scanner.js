@@ -1,4 +1,4 @@
-import { TOKEN } from "./Types.js";
+import { TOKEN } from "./Tokens.js";
 
 export class Scanner {
 
@@ -7,10 +7,10 @@ export class Scanner {
 	#current = 0;
 	#line = 1;
 
-	/** @type {any[]} */
+	/** @type {import("./Tokens.js").token[]} */
 	#tokens = [];
 
-	/** @type {Object.<string, import("./Types.js").tokenType>} */
+	/** @type {Object.<string, import("./Tokens.js").tokenType>} */
 	#keywords = {
 		CONST: TOKEN.CONST,
 		ENUM: TOKEN.ENUM,
@@ -55,7 +55,7 @@ export class Scanner {
 
 	/**
 	 * Scans given source file for Thrift tokens
-	 * @returns {any} - list of tokens found
+	 * @returns {import("./Tokens.js").token[]} - list of tokens found
 	 */
 	scanTokens() {
 		while (!this.#isAtEnd()) {
@@ -64,7 +64,7 @@ export class Scanner {
 		}
 
 		// Add final token to make it easy to detect we're done
-		this.#tokens.push({ ...TOKEN.EOF });
+		this.#tokens.push(TOKEN.EOF);
 
 		return this.#tokens;
 	}
@@ -140,7 +140,8 @@ export class Scanner {
 				} else if (this.#isAlpha(c)) {
 					this.#identifier();
 				} else {
-					console.error(`> Unexpected character: >${c}< unicode >${c.charCodeAt(0)}< (line ${this.#line} - context: ${this.#source.substr(this.#current-20, 40)}).`);
+					const curr = this.#current;
+					console.error(`> Unexpected character: >${c}< unicode >${c.charCodeAt(0)}< (line ${this.#line} - context: ${this.#source.substring(curr-20, curr+20)}).`);
 				}
 				break;
 		}
@@ -157,7 +158,7 @@ export class Scanner {
 	#literal(c) {
 		while (!this.#match(c)) this.#advance();
 
-		this.#addToken("LITERAL", this.#source.substring(this.#start, this.#current));
+		this.#addToken("LITERAL", this.#source.substring(this.#start+1, this.#current-1));
 	}
 
 	#identifier() {
@@ -243,10 +244,10 @@ export class Scanner {
 
 	/**
 	 * @param {string} type
-	 * @param {any} literal
+	 * @param {(string|number)?} literal
 	 */
 	#addToken(type, literal = null) {
-		/** @type {import("./Types.js").token} tokens */
+		/** @type {import("./Tokens.js").token} tokens */
 		const token = {
 			...TOKEN[type],
 			text: this.#source.substring(this.#start, this.#current),

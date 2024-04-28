@@ -14,6 +14,12 @@ export const THRIFT = {
 		PAYLOAD: 4
 	},
 
+	/** @type {Object.<string, number>} */
+	MESSAGE: {
+		REQUEST: 1,
+		RESPONSE: 2
+	},
+
 	/** @type {Object.<number, string>} */
 	MESSAGE_TYPES: {
 		1: "Request",
