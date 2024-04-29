@@ -11,6 +11,12 @@
 	/** @type {string} */
 	export let type = "rec";
 
+	/** @type {string?} */
+	export let thriftType = null;
+
+	/** @type {string} */
+	export let thriftMetadata = "struct";
+
 	/** @type {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} */
 	export let thriftFields = [];
 
@@ -34,6 +40,25 @@
 			if (obj.length - 2 != obj[1]) {
 				warn = "SET COUNT MISMATCH!";
 			}
+			break;
+	}
+
+	// Get list of fields for current node
+	switch (thriftMetadata) {
+		// Currently at top-level. Let's search our fields from the signature
+		// Access current service function
+
+		case "REQUEST":
+		// If current payload is request, get function params (fields)
+			break;
+
+		case "RESPONSE":
+		// If current payload is response, get output params (returns/throws)
+			break;
+
+		case "struct":
+		// Currently NOT at top-level. Safe to search our fields from one of the defined structs
+		// Search struct in definition list
 			break;
 	}
 
@@ -68,9 +93,6 @@
 
 		return (t) ? ` - type ${t}` : "";
 	}
-
-	console.warn(`>>>> Table.svelte received fields`);
-	console.warn({thriftFields});
 </script>
 
 

@@ -1,6 +1,5 @@
 // TODO: Don't really enjoy the place nor the contents of this file... =/
 
-import { browser } from "$app/environment";
 import { THRIFT } from './Types.js';
 
 	/**
@@ -19,20 +18,5 @@ export function update(payload, delta) {
 	eval(replace);
 
 	return JSON.stringify(inputObject);
-}
-
-
-/**
- * @returns {string[]} services
- */
-export function getLocalStorageServices() {
-	if (browser) {
-		return Object.keys(window.localStorage)
-			.filter(key => key.startsWith("thrift.services."))
-			.map(key => key.replaceAll("thrift.services.", ""))
-			.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-	}
-
-	return [];
 }
 

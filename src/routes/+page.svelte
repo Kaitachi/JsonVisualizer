@@ -1,11 +1,10 @@
 <script>
-	import ThriftDocument from '$components/ThriftDocument.svelte';
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
 	import { payload, thisSource } from '../stores';
+	import { sync } from '$lib/Thrift/IDL/sync.js';
 
-	let source = "";
-
-	$: thisSource.set(source);
+	// Initialize IDL syncing
+	sync();
 </script>
 
 <main>
@@ -19,7 +18,7 @@
 				</summary>
 				<div class="flex flex-col text-sm mb-2">
 					<label for="source" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
-					<textarea bind:value={source} name="source" rows="12"
+					<textarea bind:value={$thisSource} name="source" rows="12"
 						class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
 					></textarea>
 				</div>
@@ -36,8 +35,6 @@
 	</form>
 
 	<hr />
-	
-	<ThriftDocument />
 
 	{#if $payload}
 		<ThriftObjectDisplay json={$payload} />

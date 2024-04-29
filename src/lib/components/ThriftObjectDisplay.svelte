@@ -1,5 +1,5 @@
 <script>
-	import { thisService } from "../../stores.js";
+	import { getSignature, getThriftObjectForMethod } from "../Thrift/IDL/interact.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
@@ -12,9 +12,6 @@
 	/** @type {any} */
 	let jsonObject;
 
-	/** @type {boolean} */
-	let isThriftMessage = false;
-
 	/** @type {string} */
 	let errorMessage = "";
 
@@ -23,64 +20,26 @@
 
 	$: {
 		try {
-			let result = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
-
-			isThriftMessage = Array.isArray(result) && result.length === 5;
-			
-			jsonObject = (isThriftMessage)? result : null;
+			jsonObject = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
 		} catch (/** @type {any} */ error) {
 			console.error(error);
 
-			isThriftMessage = false;
 			jsonObject = null;
 			errorMessage = String(error);
 		}
 	}
 
-	/**
-	 * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} svc 
-	 * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
-	 */
-	function getFields(svc) {
-		console.error("> fetching fields from service...");
-		if (!svc) {
-			return [];
-		}
+	$: fields = (jsonObject) ? getThriftObjectForMethod(jsonObject[THRIFT.FIELDS.ENDPOINT], jsonObject[THRIFT.FIELDS.MESSAGE_TYPE]) : [];
 
-		let func = svc.functions
-					.find(f => f.identifier.toLowerCase() === jsonObject[THRIFT.FIELDS.ENDPOINT].toLowerCase())
+	let signature = (jsonObject) ? getSignature(jsonObject[THRIFT.FIELDS.ENDPOINT]) : {};
 
-		if (!func) {
-			return [];
-		}
+	if (signature) {
 
-		switch (jsonObject[THRIFT.FIELDS.MESSAGE]) {
-			case THRIFT.MESSAGE.REQUEST:
-				return func.fields ?? [];
-
-				// TODO: Show fields for response-type objects!
-			case THRIFT.MESSAGE.RESPONSE:
-				// Add return object with id of 0
-				const returns = func.returns;
-
-				/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
-				let f = [{ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: "RESPONSE", value: null }];
-
-				// Add fields found in throws section of signature
-				if (func.throws) {
-					f.push(...func.throws);
-				}
-				return f;
-		}
-
-		return [];
 	}
 
-	$: fields = getFields($thisService);
-	$: console.log({fields});
 </script>
 
-{#if isThriftMessage}
+{#if jsonObject}
 	<div class="mx-auto py-4">
 		<details class="bg-jimmy-lite-100 dark:bg-jimmy-night-700 shadow-lg p-6 rounded-lg">
 			<summary class="text-sm leading-6 text-slate-900 dark:text-gray-100 font-semibold select-none cursor-pointer">
@@ -121,7 +80,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} />
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} isRoot={true}/>
 	</div>
 {:else}
 	<div role="alert">

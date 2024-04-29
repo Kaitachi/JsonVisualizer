@@ -10,13 +10,14 @@ export function load(source) {
 	const scanner = new Scanner(source);
 	const tokens = scanner.scanTokens();
 
-	console.warn("DONE TOKENS");
-	console.table(tokens);
+	console.info("DONE TOKENS");
 
 	const parser = new Parser(tokens);
 	const tree = parser.parse();
 
-	console.warn("DONE PARSE");
+	console.info("DONE PARSE");
+
+	console.info({tree});
 
 	return tree;
 }

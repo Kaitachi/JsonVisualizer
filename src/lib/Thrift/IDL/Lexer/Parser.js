@@ -123,7 +123,7 @@ import { TOKEN } from "./Tokens.js";
  * @typedef {Object} Service
  * @property {string} identifier
  * @property {string?} extending
- * @property {ThriftFunction[]} functions
+ * @property {Object.<string, ThriftFunction>} functions
  */
 
 /**
@@ -616,13 +616,14 @@ export class Parser {
 	// ==========================
 
 	#functions() {
-		/** @type {ThriftFunction[]} */
-		const functions = [];
+		/** @type {Object.<string, ThriftFunction>} */
+		const functions = {};
 
 		this.#consume(TOKEN.LEFT_BRACE, "[#function] Expected opening brace");
 
 		while (this.#peek().type !== TOKEN.RIGHT_BRACE.type) {
-			functions.push(this.#function());
+			const func = this.#function();
+			functions[func.identifier] = func;
 		}
 
 		this.#consume(TOKEN.RIGHT_BRACE, "[#function] Expected closing brace");
@@ -1206,6 +1207,7 @@ export class Parser {
 	 * @param {string} message
 	 */
 	#error(type, message) {
+		console.table(this.#tokens);
 		throw new Error(`Unexpected token (${this.#current}): ${type}. ${message}`);
 	}
 

@@ -53,6 +53,8 @@ function syncWritable(key, fallback) {
 
 export const payload = syncWritable("payload", "");
 
+export const service = syncWritable("service", "");
+
 /** @type {import("svelte/store").Writable<string>} */
 export const thisSource = writable("");
 

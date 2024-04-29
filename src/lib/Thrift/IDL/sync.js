@@ -1,16 +1,14 @@
-<script>
-	import { thisSource, thisDocument, thisService } from "../../stores.js";
-	import { load } from "../Thrift/IDL/main.js";
-	import { TOKEN } from "../Thrift/IDL/Lexer/Tokens.js";
+import { get } from "svelte/store";
+import { service, thisSource, thisDocument, thisService } from "../../../stores.js";
+import { load } from "./main.js";
+import { TOKEN } from "./Lexer/Tokens.js";
 
-	/** @type {string} */
-	export let service = "";
-
+export function sync() {
 	thisSource.subscribe((/** @type {string} */ value) => {
-		console.error(`>> RECEIVED SOURCE UPDATE (length ${value.length})<<`);
 		thisDocument.set(load(value));
 	});
 
+	// TODO: Would a derived store be more convenient for this use-case...?
 	thisDocument.subscribe((/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Document?} */ document) => {
 		if (!document) {
 			thisService.set(null);
@@ -36,10 +34,10 @@
 			selectedService = services[0].definition;
 		} else {
 			selectedService = services
-				.filter(svc => svc.name === service)[0].definition;
+				.filter(svc => svc.name === get(service))[0].definition;
 		}
 
 		thisService.set(selectedService);
-
 	});
-</script>
+}
+
