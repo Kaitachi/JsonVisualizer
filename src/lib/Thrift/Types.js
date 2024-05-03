@@ -27,10 +27,10 @@ export const THRIFT = {
 	},
 
 	/** @type {function(number): string} */
-	PAYLOAD_TYPES: (payload_type) => {
-		switch (payload_type) {
+	PAYLOAD_TYPES: (type) => {
+		switch (type) {
 			case 1: return 'Regular Object';
-			default: return 'Error Object';
+			default: return 'Something Else???';
 		}
 	},
 

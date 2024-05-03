@@ -1,14 +1,19 @@
 <script>
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
-	import { payload, thisSource } from '../stores';
-	import { sync } from '$lib/Thrift/IDL/sync.js';
-
-	// Initialize IDL syncing
-	sync();
+	import { json } from '../stores';
+	import { source, document, service, method } from '$lib/Thrift/IDL/stores.js';
 </script>
 
 <main>
 	<h1 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 md:text-3xl">Thrift Message Visualizer</h1>
+
+	source: {JSON.stringify($source)}
+	<hr />
+	document: {JSON.stringify($document)}
+	<hr />
+	service: {JSON.stringify($service)}
+	<hr />
+	method: {JSON.stringify($method)}
 
 	<form class="my-6">
 		<fieldset>
@@ -18,7 +23,7 @@
 				</summary>
 				<div class="flex flex-col text-sm mb-2">
 					<label for="source" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
-					<textarea bind:value={$thisSource} name="source" rows="12"
+					<textarea bind:value={$source} name="source" rows="12"
 						class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
 					></textarea>
 				</div>
@@ -26,8 +31,8 @@
 		</fieldset>
 		<fieldset class="mt-6">
 			<div class="flex flex-col text-sm mb-2">
-				<label for="payload" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Message</label>
-				<textarea bind:value={$payload} name="payload" rows="8"
+				<label for="json" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Message</label>
+				<textarea bind:value={$json} name="json" rows="8"
 					class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
 				></textarea>
 			</div>
@@ -36,7 +41,8 @@
 
 	<hr />
 
-	{#if $payload}
-		<ThriftObjectDisplay json={$payload} />
+	{#if $json}
+		<ThriftObjectDisplay json={$json} />
 	{/if}
 </main>
+

@@ -1,5 +1,5 @@
 <script>
-	import { getSignature, getThriftObjectForMethod } from "../Thrift/IDL/interact.js";
+	import { getThriftObjectForMethod } from "$lib/Thrift/IDL/interact.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
@@ -29,12 +29,12 @@
 		}
 	}
 
-	$: fields = (jsonObject) ? getThriftObjectForMethod(jsonObject[THRIFT.FIELDS.ENDPOINT], jsonObject[THRIFT.FIELDS.MESSAGE_TYPE]) : [];
+	$: {
+		if (jsonObject) {
+			fields = getThriftObjectForMethod(jsonObject[THRIFT.FIELDS.ENDPOINT], jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]);
 
-	let signature = (jsonObject) ? getSignature(jsonObject[THRIFT.FIELDS.ENDPOINT]) : {};
-
-	if (signature) {
-
+			console.warn({fields});
+		}
 	}
 
 </script>
@@ -80,7 +80,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} isRoot={true}/>
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} />
 	</div>
 {:else}
 	<div role="alert">

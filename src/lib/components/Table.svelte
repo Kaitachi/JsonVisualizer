@@ -12,7 +12,7 @@
 	export let type = "rec";
 
 	/** @type {string?} */
-	export let thriftType = null;
+	export const thriftType = null;
 
 	/** @type {string} */
 	export let thriftMetadata = "struct";
@@ -49,11 +49,11 @@
 		// Access current service function
 
 		case "REQUEST":
-		// If current payload is request, get function params (fields)
+		// If current json is request, get function params (fields)
 			break;
 
 		case "RESPONSE":
-		// If current payload is response, get output params (returns/throws)
+		// If current json is response, get output params (returns/throws)
 			break;
 
 		case "struct":

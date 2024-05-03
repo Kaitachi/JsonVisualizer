@@ -1,13 +1,13 @@
 /**
- * @param {string} payload
+ * @param {string} json
  * @returns {import("../Types").ThriftMessage}
  */
-export function validate(payload) {
+export function validate(json) {
 	/** @type {import("../Types").ThriftMessage} */
 	let message = [];
 
 	try {
-		let msg = JSON.parse(payload);
+		let msg = JSON.parse(json);
 
 		if (!Array.isArray(msg)) {
 			throw new Error("Input data is not an array!");

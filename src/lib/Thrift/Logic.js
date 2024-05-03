@@ -3,12 +3,12 @@
 import { THRIFT } from './Types.js';
 
 	/**
-	 * Updates payload with given change details
-	 * @param {string} payload - Payload to be updated
-	 * @param {{type: string, value: string, path: string}} delta - Change to be performed on payload
+	 * Updates json with given change details
+	 * @param {string} json - json to be updated
+	 * @param {{type: string, value: string, path: string}} delta - Change to be performed on json
 	 */
-export function update(payload, delta) {
-	let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE(payload);
+export function update(json, delta) {
+	let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
 
 	if (!THRIFT.DATA_TYPES[delta.type] || !THRIFT.DATA_TYPES[delta.type].is_unquoted) {
 		delta.value = `"${delta.value}"`;

@@ -1,5 +1,5 @@
 <script>
-	import { payload } from "../../stores";
+	import { json } from "../../stores";
 	import Tooltip from "./Tooltip.svelte";
 	import { update } from "../Thrift/Logic.js";
 	import InPlaceEdit from "./InPlaceEdit.svelte";
@@ -43,7 +43,7 @@
 				value: newValue
 			};
 
-			$payload = update($payload, changes);
+			$json = update($json, changes);
 		}
 	}
 </script>
