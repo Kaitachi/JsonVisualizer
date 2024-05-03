@@ -1,14 +1,17 @@
-import { get } from "svelte/store";
-import { service } from "./stores.js";
 import { THRIFT } from "../Types.js";
 
 /**
- * @param {string} method
- * @param {number} messageType
+ * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} service
+ * @param {string?} method
+ * @param {number?} messageType
  * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
  */
-export function getThriftObjectForMethod(method, messageType) {
-	const signature = get(service)?.functions[method];
+export function getThriftStructForMethod(service, method, messageType) {
+	if (!method || !messageType) {
+		return [];
+	}
+
+	const signature = service?.functions[method];
 
 	if (!signature) { return []; }
 
@@ -21,15 +24,31 @@ export function getThriftObjectForMethod(method, messageType) {
 			const returns = signature.returns;
 
 			/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
-			let f = [{ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: "RESPONSE", value: null }];
+			let f = [{ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: `response for ${method} method`, value: null }];
 
 			// Add fields found in throws section of signature
 			if (signature.throws) {
 				f.push(...signature.throws);
 			}
+
+			console.warn({f});
 			return f;
 	}
 
 	return [];
+}
+
+/**
+ * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Document?} document
+ * @param {string?} name
+ * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
+ */
+export function getThriftStruct(document, name) {
+	if (!name) {
+		return [];
+	}
+
+	// FIXME: Validate this object is a Struct, perhaps?
+	return document?.definitions[name]?.definition?.fields;
 }
 

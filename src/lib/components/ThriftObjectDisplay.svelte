@@ -1,5 +1,4 @@
 <script>
-	import { getThriftObjectForMethod } from "$lib/Thrift/IDL/interact.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
@@ -15,9 +14,6 @@
 	/** @type {string} */
 	let errorMessage = "";
 
-	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
-	let fields = [];
-
 	$: {
 		try {
 			jsonObject = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
@@ -28,15 +24,6 @@
 			errorMessage = String(error);
 		}
 	}
-
-	$: {
-		if (jsonObject) {
-			fields = getThriftObjectForMethod(jsonObject[THRIFT.FIELDS.ENDPOINT], jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]);
-
-			console.warn({fields});
-		}
-	}
-
 </script>
 
 {#if jsonObject}
@@ -80,7 +67,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} thriftFields={fields} />
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} struct={jsonObject[THRIFT.FIELDS.ENDPOINT]} payloadType={jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]} />
 	</div>
 {:else}
 	<div role="alert">

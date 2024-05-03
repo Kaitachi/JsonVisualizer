@@ -1,6 +1,8 @@
 <script>
 	import Cell from "./Cell.svelte";
 	import { THRIFT } from "../Thrift/Types.js";
+	import { getThriftStructForMethod, getThriftStruct } from "$lib/Thrift/IDL/interact";
+	import { document, service } from "$lib/Thrift/IDL/stores";
 
 	/** @type {any} */
 	export let obj;
@@ -12,13 +14,13 @@
 	export let type = "rec";
 
 	/** @type {string?} */
-	export const thriftType = null;
+	export let struct = null;
 
-	/** @type {string} */
-	export let thriftMetadata = "struct";
+	/** @type {number?} */
+	export let payloadType = null;
 
 	/** @type {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} */
-	export let thriftFields = [];
+	let fields = [];
 
 	/** @type {string} */
 	let warn = "";
@@ -43,53 +45,55 @@
 			break;
 	}
 
-	// Get list of fields for current node
-	switch (thriftMetadata) {
-		// Currently at top-level. Let's search our fields from the signature
-		// Access current service function
-
-		case "REQUEST":
-		// If current json is request, get function params (fields)
-			break;
-
-		case "RESPONSE":
-		// If current json is response, get output params (returns/throws)
-			break;
-
-		case "struct":
-		// Currently NOT at top-level. Safe to search our fields from one of the defined structs
-		// Search struct in definition list
-			break;
+	$: {
+		if (payloadType) {
+			// Received request/response object, let's fetch it from our service layer
+			fields = getThriftStructForMethod($service, struct, payloadType);
+		} else {
+			// Received some regular object, let's fetch it from our document layer
+			fields = getThriftStruct($document, struct);
+		}
 	}
 
 	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
 	 * @param {string} index
 	 * @returns {string}
 	 */
-	function fieldName(index) {
-		if (!thriftFields.length) {
+	function fieldName(fields, index) {
+		if (!fields.length) {
 			return "";
 		}
 
-		let field = thriftFields
+		let field = fields
 				.find(field => field.id === +index)
 				?.identifier;
+
+		console.warn({fields});
+		console.warn(`> fieldName(${index}) = ${field}`);
 
 		return (field) ? `: ${field}` : "";
 	}
 
 	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
 	 * @param {string} index
 	 * @returns {string}
 	 */
-	function fieldType(index) {
-		if (!thriftFields.length) {
+	function fieldType(fields, index) {
+		if (!fields.length) {
 			return "";
 		}
 
-		let t = thriftFields
+		let t = fields
 				.find(field => field.id === +index)
 				?.type;
+
+		// FIXME: What a nasty solution to string coercion here...
+		if (!t || THRIFT.DATA_TYPES[`${t}`.toLowerCase()]) {
+			// Ignore primitives
+			return "";
+		}
 
 		return (t) ? ` - type ${t}` : "";
 	}
@@ -119,8 +123,8 @@
 							class="px-6 py-3"
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
-							{column[0]}{fieldName(column[0])}
-							<em>({cell_type_name}{fieldType(column[0])})</em>
+							{column[0]}{fieldName(fields, column[0])}
+							<em>({cell_type_name}{fieldType(fields, column[0])})</em>
 						</th>
 					{/each}
 				{:else if type === "map"}

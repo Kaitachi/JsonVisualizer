@@ -43,11 +43,3 @@ export const service = derived([selectedService, document], ([$selectedService, 
 	return thisService;
 });
 
-export const method = derived(service, ($service) => {
-	if (!$service) {
-		return null;
-	}
-});
-
-
-

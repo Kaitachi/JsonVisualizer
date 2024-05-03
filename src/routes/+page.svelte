@@ -1,19 +1,15 @@
 <script>
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
 	import { json } from '../stores';
-	import { source, document, service, method } from '$lib/Thrift/IDL/stores.js';
+	import { source, document, service } from '$lib/Thrift/IDL/stores.js';
 </script>
 
 <main>
 	<h1 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 md:text-3xl">Thrift Message Visualizer</h1>
 
-	source: {JSON.stringify($source)}
-	<hr />
 	document: {JSON.stringify($document)}
 	<hr />
 	service: {JSON.stringify($service)}
-	<hr />
-	method: {JSON.stringify($method)}
 
 	<form class="my-6">
 		<fieldset>
