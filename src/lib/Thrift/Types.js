@@ -44,6 +44,7 @@ export const THRIFT = {
 	/** @type {Object.<string, ThriftDataType>} */
 	DATA_TYPES: {
 		"tf" : { name: "boolean", is_container: false, is_unquoted: true },
+		"i8": { name: "byte", is_container: false, is_unquoted: true },
 		"i16": { name: "short", is_container: false, is_unquoted: true },
 		"i32": { name: "int", is_container: false, is_unquoted: true },
 		"i64": { name: "long", is_container: false, is_unquoted: true },

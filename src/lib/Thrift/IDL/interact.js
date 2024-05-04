@@ -21,10 +21,10 @@ export function getThriftStructForMethod(service, method, messageType) {
 
 		case THRIFT.MESSAGE.RESPONSE:
 			// Add return object with id of 0
-			const returns = signature.returns;
+			const returns = signature.returns ?? "UNDEFINED?";
 
 			/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
-			let f = [{ id: 0, requiredness: null, type: returns ?? "UNDEFINED?", identifier: `response for ${method} method`, value: null }];
+			let f = [{ id: 0, requiredness: null, type: returns, identifier: `response for ${method} method`, value: null }];
 
 			// Add fields found in throws section of signature
 			if (signature.throws) {

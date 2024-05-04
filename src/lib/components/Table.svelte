@@ -61,7 +61,7 @@
 	 * @returns {string}
 	 */
 	function fieldName(fields, index) {
-		if (!fields.length) {
+		if (!fields || !fields.length) {
 			return "";
 		}
 
@@ -78,10 +78,16 @@
 	/**
 	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
 	 * @param {string} index
+	 * @param {string} cellType
 	 * @returns {string}
 	 */
-	function fieldType(fields, index) {
-		if (!fields.length) {
+	function fieldType(fields, index, cellType) {
+		if (!fields || !fields.length) {
+			return "";
+		}
+
+		if (!cellType || THRIFT.DATA_TYPES[cellType.toLowerCase()]) {
+			// Ignore primitives
 			return "";
 		}
 
@@ -89,13 +95,25 @@
 				.find(field => field.id === +index)
 				?.type;
 
-		// FIXME: What a nasty solution to string coercion here...
-		if (!t || THRIFT.DATA_TYPES[`${t}`.toLowerCase()]) {
-			// Ignore primitives
+		return (t) ? ` - type ${t}` : "";
+	}
+
+	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
+	 * @param {string} index
+	 * @returns {string}
+	 */
+	// TODO: Does this work???
+	function fieldStruct(fields, index) {
+		if (!fields || !fields.length) {
 			return "";
 		}
 
-		return (t) ? ` - type ${t}` : "";
+		let t = fields
+				.find(field => field.id === +index)
+				?.type;
+
+		return `${t}`;
 	}
 </script>
 
@@ -124,7 +142,7 @@
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
 							{column[0]}{fieldName(fields, column[0])}
-							<em>({cell_type_name}{fieldType(fields, column[0])})</em>
+							<em>({cell_type_name}{fieldType(fields, column[0], cell_type)})</em>
 						</th>
 					{/each}
 				{:else if type === "map"}
@@ -193,7 +211,7 @@
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[cell_type].is_container}
-								<svelte:self obj={value} jsonPath={subpath} type={cell_type} />
+								<svelte:self obj={value} jsonPath={subpath} type={cell_type} struct={fieldStruct(fields, field[0])} />
 							{:else}
 								<Cell entry={entry} path={subpath} />
 							{/if}
