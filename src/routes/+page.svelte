@@ -2,6 +2,9 @@
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
 	import { json } from '../stores';
 	import { source, document, service } from '$lib/Thrift/IDL/stores.js';
+	import { enableDebug } from '$lib/Thrift/IDL/debug.js';
+
+	enableDebug();
 </script>
 
 <main>

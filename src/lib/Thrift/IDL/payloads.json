@@ -1,0 +1,76 @@
+[
+	{
+		"file": "SmallTest.thrift",
+		"samples": [
+			{
+				"name": "sample_01",
+				"request": [1,"testThinger",1,1,{"1":{"rec":{"1":{"i32":1234}}}}]
+			}
+		]
+	},
+	{
+		"file": "DocTest.thrift",
+		"samples": [
+			{
+				"name": "sample_01_testVoid",
+				"request": [1,"testVoid",1,1,{}],
+				"response": [1,"testVoid",1,2,{}]
+			},
+			{
+				"name": "sample_02_testString",
+				"request": [1,"testString",1,1,{"1":{"str":"my request string"}}],
+				"response": [1,"testString",1,2,{"0":{"str":"my response string"}}]
+			},
+			{
+				"name": "sample_03_testByte",
+				"request": [1,"testByte",1,1,{"1":{"i8":1}}],
+				"response": [1,"testByte",1,2,{"0":{"i8":2}}]
+			},
+			{
+				"name": "sample_04_testShort",
+				"request": [1,"testShort",1,1,{"1":{"i16":11}}],
+				"response": [1,"testShort",1,2,{"0":{"i16":22}}]
+			},
+			{
+				"name": "sample_05_testI32",
+				"request": [1,"testI32",1,1,{"1":{"i32":111}}],
+				"response": [1,"testI32",1,2,{"0":{"i32":222}}]
+			},
+			{
+				"name": "sample_06_testI64",
+				"request": [1,"testI64",1,1,{"1":{"i64":1111}}],
+				"response": [1,"testI64",1,2,{"0":{"i64":2222}}]
+			},
+			{
+				"name": "sample_07_testDouble",
+				"request": [1,"testDouble",1,1,{"1":{"dbl":11.11}}],
+				"response": [1,"testDouble",1,2,{"0":{"dbl":22.22}}]
+			},
+			{
+				"name": "sample_08_testStruct",
+				"request": [1,"testStruct",1,1,{"1":{"rec":{"1":{"str":"my request struct"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}}}}],
+				"response": [1,"testStruct",1,2,{"0":{"rec":{"1":{"str":"my response struct"},"4":{"i8":3},"9":{"i32":888},"11":{"i64":2222}}}}]
+			},
+			{
+				"name": "sample_09_testNest",
+				"request": [1,"testNest",1,1,{"1":{"rec":{"1":{"i8":1},"2":{"rec":{"1":{"str":"my request struct"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}}},"3":{"i32":333}}}}],
+				"response": [1,"testNest",1,2,{"0":{"rec":{"1":{"i8":1},"2":{"rec":{"1":{"str":"my response struct"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}}},"3":{"i32":333}}}}]
+			},
+			{
+				"name": "sample_10_testMap",
+				"request": [1,"testNest",1,1,{"1":{"map":["i32","i32",4,{"11":12,"22":23,"33":34,"44":45}]}}],
+				"response": [1,"testNest",1,2,{"0":{"map":["i32","i32",4,{"12":13,"23":24,"34":35,"45":46}]}}]
+			},
+			{
+				"name": "sample_11_testSet",
+				"request": [1,"testSet",1,1,{"1":{"set":["i32",5,5,10,15,20,25]}}],
+				"response": [1,"testSet",1,2,{"0":{"set":["i32",3,3,6,9]}}]
+			},
+			{
+				"name": "sample_12_testList",
+				"request": [1,"testSet",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
+				"response": [1,"testSet",1,2,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
+			}
+		]
+	}
+]
