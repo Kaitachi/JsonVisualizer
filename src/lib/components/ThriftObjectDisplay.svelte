@@ -33,35 +33,45 @@
 				Thrift Metadata
 			</summary>
 			<div class="mt-3 text-sm leading-6 text-slate-600 dark:text-gray-100">
-				<dl class="px-4">
-					<dt class="mt-0">Thrift Version:</dt>
-					<dd class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-						{jsonObject[THRIFT.FIELDS.VERSION]}
-					</dd>
+				<dl class="divide-y divide-gray-100">
+					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
+						<dt class="text-sm font-medium leading-6">Thrift Version</dt>
+						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
+							{jsonObject[THRIFT.FIELDS.VERSION]}
+						</dd>
+					</div>
 
-					<dt class="mt-6">Endpoint:</dt>
-					<dd class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-						{jsonObject[THRIFT.FIELDS.ENDPOINT]}
-					</dd>
+					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
+						<dt class="text-sm font-medium leading-6">Endpoint</dt>
+						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
+							{jsonObject[THRIFT.FIELDS.ENDPOINT]}
+						</dd>
+					</div>
 
-					<dt class="mt-6">Message Type:</dt>
-					<dd class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-						{jsonObject[THRIFT.FIELDS.MESSAGE]} -
-						({THRIFT.MESSAGE_TYPES[jsonObject[THRIFT.FIELDS.MESSAGE]]})
-					</dd>
+					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
+						<dt class="text-sm font-medium leading-6">Message Type</dt>
+						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
+							{jsonObject[THRIFT.FIELDS.MESSAGE]} -
+							({THRIFT.MESSAGE_TYPES[jsonObject[THRIFT.FIELDS.MESSAGE]]})
+						</dd>
+					</div>
 
-					<dt class="mt-6">Payload Type:</dt>
-					<dd class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-						{jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]} -
-						({THRIFT.PAYLOAD_TYPES(jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE])})
-					</dd>
+					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
+						<dt class="text-sm font-medium leading-6">Payload Type</dt>
+						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
+							{jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]} -
+							({THRIFT.PAYLOAD_TYPES(jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE])})
+						</dd>
+					</div>
 
-					<dt class="mt-6">Payload:</dt>
-					<dd class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-						<code>
-							{JSON.stringify(jsonObject)}
-						</code>
-					</dd>
+					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
+						<dt class="text-sm font-medium leading-6">Payload</dt>
+						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
+							<code>
+								{JSON.stringify(jsonObject)}
+							</code>
+						</dd>
+					</div>
 				</dl>
 			</div>
 		</details>
