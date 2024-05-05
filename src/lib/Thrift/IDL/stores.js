@@ -2,6 +2,8 @@ import { writable, derived } from "svelte/store";
 import { service as selectedService } from "../../../stores.js";
 import { load } from "./main.js";
 import { TOKEN } from "./Lexer/Tokens.js";
+import { enableDebug } from "./debug.js";
+import { dev } from "$app/environment";
 
 
 export const source = writable("");
@@ -42,4 +44,9 @@ export const service = derived([selectedService, document], ([$selectedService, 
 
 	return thisService;
 });
+
+
+if (dev) {
+	enableDebug();
+}
 
