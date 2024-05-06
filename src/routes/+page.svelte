@@ -3,7 +3,7 @@
 	import { json } from '../stores';
 	import { source, document, service } from '$lib/Thrift/IDL/stores.js';
 
-	let activeTab = "Debug";
+	let activeTab = "Message";
 
 	function setActiveTab(/** @type {string} */ selectedTab) {
 		activeTab = selectedTab;
