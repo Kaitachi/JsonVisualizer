@@ -90,6 +90,26 @@ struct Insanity
   2: list<Xtruct> xtructs
 }
 
+/** Struct insanity2 */
+struct Insanity2
+{
+
+  /** This is doc for field 1 */
+  1: map<Numberz, UserId> userMap,
+
+  /** And this is doc for field 2 */
+  2: list<Xtruct> xtructs_list
+
+  /** And this is doc for field 3 */
+  3: set<Xtruct> xtructs_set
+
+  /** And this is doc for field 4 */
+  4: Xtruct xtructs_rec
+
+  /** This is doc for field 5 */
+  5: map<Numberz, Xtruct> xtructs_map,
+}
+
 exception Xception {
   1: i32 errorCode,
   2: string message
@@ -144,6 +164,7 @@ service ThriftTest
   /* So you think you've got this all worked, out eh? */
   map<UserId, map<Numberz,Insanity>> testInsanity(1: Insanity argument),
 
+  map<UserId, map<Numberz,Insanity>> testInsanity2(1: Insanity2 argument),
 }
 
 /// This style of Doxy-comment doesn't work.

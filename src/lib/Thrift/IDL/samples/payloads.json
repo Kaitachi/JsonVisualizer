@@ -74,14 +74,39 @@
 			{
 				"name": "sample_13_testEnum",
 				"TODO": "Properly define this sample!!!",
-				"request": [1,"testEnum",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
-				"response": [1,"testEnum",2,1,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
+				"request": [1,"testEnum",1,1,{}],
+				"response": [1,"testEnum",2,1,{}]
 			},
 			{
 				"name": "sample_14_testTypedef",
 				"TODO": "Properly define this sample!!!",
-				"request": [1,"testTypedef",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
-				"response": [1,"testTypedef",2,1,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
+				"request": [1,"testTypedef",1,1,{}],
+				"response": [1,"testTypedef",2,1,{}]
+			},
+			{
+				"name": "sample_15_testMapMap",
+				"TODO": "Properly define this sample!!!",
+				"request": [1,"testMapMap",1,1,{}],
+				"response": [1,"testMapMap",2,1,{}]
+			},
+			{
+				"name": "sample_16_testInsanity",
+				"request": [1,"testInsanity",1,1,{"1":{"rec":{"1":{"map":["i32","i64",4,{"11":12,"22":23,"33":34,"44":45}]},"2":{"lst":["rec",2,{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}},{"1":{"str":"my request struct 2"},"4":{"i8":5},"9":{"i32":1000},"11":{"i64":1112}}]}}}}],
+				"response": [1,"testInsanity",2,1,{}]
+			},
+			{
+				"name": "sample_17_testInsanity",
+				"request": [1,"testInsanity2",1,1,{
+					"1":{"rec":{
+						"1":{"map":["i32","i64",4,{"11":12,"22":23,"33":34,"44":45}]},
+						"2":{"lst":["rec",2,{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}},{"1":{"str":"my request struct 2"},"4":{"i8":5},"9":{"i32":1000},"11":{"i64":1112}}]},
+						"3":{"set":["rec",3,{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}},{"1":{"str":"my request struct 2"},"4":{"i8":5},"9":{"i32":1000},"11":{"i64":1112}},{"1":{"str":"my request struct 3"},"4":{"i8":6},"9":{"i32":1001},"11":{"i64":1113}}]},
+						"4":{"rec":{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}}},
+						"5":{"map":["i32","rec",1,{"11":{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}}}]}
+						}
+					}
+				}],
+				"response": [1,"testInsanity2",2,1,{}]
 			}
 		]
 	}

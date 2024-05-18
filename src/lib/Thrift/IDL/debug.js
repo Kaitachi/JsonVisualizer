@@ -5,8 +5,8 @@ import debug_source from "./samples/DocTest.thrift?raw";
 
 
 export const debug_file = "DocTest.thrift";
-export const debug_sample = "sample_12";
-export const debug_type = "response";
+export const debug_sample = "sample_17";
+export const debug_type = "request";
 
 
 export function enableDebug() {
