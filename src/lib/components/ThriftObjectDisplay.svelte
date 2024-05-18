@@ -77,7 +77,7 @@
 		</details>
 	</div>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} struct={jsonObject[THRIFT.FIELDS.ENDPOINT]} payloadType={jsonObject[THRIFT.FIELDS.PAYLOAD_TYPE]} />
+		<Table obj={jsonObject[THRIFT.FIELDS.PAYLOAD]} {jsonPath} struct={jsonObject[THRIFT.FIELDS.ENDPOINT]} payloadType={jsonObject[THRIFT.FIELDS.MESSAGE]} />
 	</div>
 {:else}
 	<div role="alert">

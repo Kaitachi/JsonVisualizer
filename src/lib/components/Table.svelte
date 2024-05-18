@@ -174,7 +174,7 @@
 						class="px-6 py-3"
 						data-type="{lst_type}"
 						data-json-path="{subpath}">
-						<em>({THRIFT.DATA_TYPES[obj[0]].name})</em>
+						Items <em>({THRIFT.DATA_TYPES[obj[0]].name})</em>
 					</th>
 				{:else if type === "set"}
 					{@const set_type = obj[0]}
@@ -254,7 +254,7 @@
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th scope="row"
-							class="px-6 py-4">
+							class="px-6 py-4 w-10">
 							{i}
 						</th>
 						<td class="px-6 py-4"
@@ -279,7 +279,7 @@
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th scope="row"
-							class="px-6 py-4">
+							class="px-6 py-4 w-10">
 							{i}
 						</th>
 						<td class="px-6 py-4"
