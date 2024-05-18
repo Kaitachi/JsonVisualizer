@@ -70,6 +70,18 @@
 				"name": "sample_12_testList",
 				"request": [1,"testList",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
 				"response": [1,"testList",2,1,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
+			},
+			{
+				"name": "sample_13_testEnum",
+				"TODO": "Properly define this sample!!!",
+				"request": [1,"testEnum",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
+				"response": [1,"testEnum",2,1,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
+			},
+			{
+				"name": "sample_14_testTypedef",
+				"TODO": "Properly define this sample!!!",
+				"request": [1,"testTypedef",1,1,{"1":{"lst":["i32",4,4,8,12,16]}}],
+				"response": [1,"testTypedef",2,1,{"0":{"lst":["i32",6,3,6,9,12,15,18]}}]
 			}
 		]
 	}
