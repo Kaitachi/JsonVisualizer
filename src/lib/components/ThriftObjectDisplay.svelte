@@ -1,4 +1,5 @@
 <script>
+	import { validate } from "$lib/Thrift/Message/validator.js";
 	import { THRIFT } from "../Thrift/Types.js";
 	import Table from "./Table.svelte";
 
@@ -16,7 +17,7 @@
 
 	$: {
 		try {
-			jsonObject = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
+			jsonObject = validate(json);
 		} catch (/** @type {any} */ error) {
 			console.error(error);
 

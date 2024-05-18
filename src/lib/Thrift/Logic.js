@@ -1,5 +1,6 @@
 // TODO: Don't really enjoy the place nor the contents of this file... =/
 
+import { validate } from './Message/validator.js';
 import { THRIFT } from './Types.js';
 
 	/**
@@ -8,7 +9,7 @@ import { THRIFT } from './Types.js';
 	 * @param {{type: string, value: string, path: string}} delta - Change to be performed on json
 	 */
 export function update(json, delta) {
-	let inputObject = THRIFT.VALIDATE_THRIFT_MESSAGE(json);
+	let inputObject = validate(json);
 
 	if (!THRIFT.DATA_TYPES[delta.type] || !THRIFT.DATA_TYPES[delta.type].is_unquoted) {
 		delta.value = `"${delta.value}"`;

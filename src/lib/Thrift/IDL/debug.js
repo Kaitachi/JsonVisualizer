@@ -10,7 +10,7 @@ export const debug_type = "request";
 
 
 export function enableDebug() {
-	console.debug(`Loading from debug...`);
+	console.warn(`Loading from debug...`);
 
 	source.set(debug_source);
 
