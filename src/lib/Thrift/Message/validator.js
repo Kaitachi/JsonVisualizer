@@ -64,15 +64,15 @@ const debug_validations = false;
 
 /** @type {Object.<string, function>} */
 const VALIDATE = {
-	"tf" : (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"tf" : (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Booleans should be just a single primitive Boolean type
 		debug_validations && console.warn(`~~> VALIDATE.tf(${path}): payload ${JSON.stringify(payload)}`);
 
-		if (typeof payload !== "boolean") {
-			throw new Error(`Unexpected item! Expected boolean. Received ${typeof payload}. JSONPath: ${path}`);
+		if (typeof payload !== "number" && [0, 1].includes(payload)) {
+			throw new Error(`Unexpected item! Expected 0/1. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"i8": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"i8": (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Bytes should be just a single primitive Number type
 		debug_validations && console.warn(`~~> VALIDATE.i8(${path}): payload ${JSON.stringify(payload)}`);
 
@@ -80,7 +80,7 @@ const VALIDATE = {
 			throw new Error(`Unexpected item! Expected number. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"i16": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"i16": (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Shorts should be just a single primitive Number type
 		debug_validations && console.warn(`~~> VALIDATE.i16(${path}): payload ${JSON.stringify(payload)}`);
 
@@ -88,7 +88,7 @@ const VALIDATE = {
 			throw new Error(`Unexpected item! Expected number. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"i32": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"i32": (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Integers should be just a single primitive Number type
 		debug_validations && console.warn(`~~> VALIDATE.i32(${path}): payload ${JSON.stringify(payload)}`);
 
@@ -96,7 +96,7 @@ const VALIDATE = {
 			throw new Error(`Unexpected item! Expected number. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"i64": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"i64": (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Longs should be just a single primitive Number type
 		debug_validations && console.warn(`~~> VALIDATE.i64(${path}): payload ${JSON.stringify(payload)}`);
 
@@ -104,7 +104,7 @@ const VALIDATE = {
 			throw new Error(`Unexpected item! Expected number. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"dbl": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"dbl": (/** @type {number} */ payload, /** @type {string} */ path) => {
 		// NOTE: Doubles should be just a single primitive Number type
 		debug_validations && console.warn(`~~> VALIDATE.dbl(${path}): payload ${JSON.stringify(payload)}`);
 
@@ -112,7 +112,7 @@ const VALIDATE = {
 			throw new Error(`Unexpected item! Expected number. Received ${typeof payload}. JSONPath: ${path}`);
 		}
 	},
-	"str": (/** @type {Object} */ payload, /** @type {string} */ path) => {
+	"str": (/** @type {string} */ payload, /** @type {string} */ path) => {
 		// NOTE: Strings should be just a single primitive String type
 		debug_validations && console.warn(`~~> VALIDATE.str(${path}): payload ${JSON.stringify(payload)}`);
 
