@@ -331,8 +331,12 @@ export class Parser {
 				}
 
 			case TOKEN.CPP_INCLUDE.type:
-				// TODO: Parse CPP_INCLUDE type!
-				throw this.#error(token.type, `Header token ${token.type} not supported!`);
+				const cpp_include = this.#cppInclude();
+				return {
+					type: TOKEN.INCLUDE.type,
+					name: cpp_include.literal,
+					header: cpp_include
+				}
 
 			case TOKEN.NAMESPACE.type:
 				const namespace = this.#namespace();
