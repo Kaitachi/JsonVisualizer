@@ -296,7 +296,9 @@ export class Parser {
 		
 				default:
 					const definition = this.#definition();
-					document.definitions[definition.name] = definition;
+					if (definition !== null) {
+						document.definitions[definition.name] = definition;
+					}
 					break;
 			}
 		}
@@ -366,14 +368,7 @@ export class Parser {
 
 		switch (token.type) {
 			case TOKEN.IDENTIFIER.type:
-				let scopeName = token.text;
-
-				if (this.#peek().type === TOKEN.DOT.type) {
-					scopeName += this.#advance().text; // Append dot
-					scopeName += this.#advance().text; // Append second identifier
-				}
-				
-				return scopeName;
+				return this.#identifier();
 
 			default:
 				return '*';
@@ -388,7 +383,7 @@ export class Parser {
 	/**
 	 * [07] Definition      ::=  Const | Typedef | Enum | Struct | Union | Exception | Service
 	 *
-	 * @returns {Definition}
+	 * @returns {Definition?}
 	 */
 	#definition() {
 		const token = this.#peek();
@@ -449,6 +444,10 @@ export class Parser {
 					name: service.identifier,
 					definition: service
 				};
+
+			case TOKEN.LEFT_PAREN.type:
+				this.#oddParens();
+				return null;
 
 			default:
 				console.error(`Token ${token.type} not supported!`);
@@ -647,7 +646,7 @@ export class Parser {
 		this.#listSeparator();
 
 		return {
-			oneway: (oneway) ? oneway.text : null,
+			oneway: oneway,
 			identifier,
 			returns: functionType,
 			fields: fields,
@@ -655,9 +654,12 @@ export class Parser {
 		};
 	}
 
+	/**
+	 * @returns {string?}
+	 */
 	#oneway() {
-		if (this.#peekNext()?.type === TOKEN.ONEWAY.type) {
-			return this.#advance();
+		if (this.#peek().type === TOKEN.ONEWAY.type) {
+			return this.#advance().text ?? null;
 		}
 
 		return null;
@@ -847,16 +849,19 @@ export class Parser {
 	#containerType() {
 		const mapType = this.#mapType();
 		if (mapType !== null) {
+			this.#oddParens(); // NOTE: Take care of odd parentheses
 			return mapType;
 		}
 
 		const setType = this.#setType();
 		if (setType !== null) {
+			this.#oddParens(); // NOTE: Take care of odd parentheses
 			return setType;
 		}
 
 		const listType = this.#listType();
 		if (listType !== null) {
+			this.#oddParens(); // NOTE: Take care of odd parentheses
 			return listType;
 		}
 
@@ -973,6 +978,9 @@ export class Parser {
 
 			case TOKEN.LITERAL.type:
 				return this.#advance();
+
+			case TOKEN.IDENTIFIER.type:
+				return this.#identifier();
 		}
 
 		throw this.#error(token.type, `Expected constValue Token, found ${token.type}!`);
@@ -1131,12 +1139,7 @@ export class Parser {
 	#identifier() {
 		let text = "";
 
-		while (this.#peek().type === TOKEN.IDENTIFIER.type && this.#peekNext()?.type === TOKEN.DOT.type) {
-			text += this.#advance().text;
-			text += this.#advance().text;
-		}
-
-		if (this.#peek().type === TOKEN.IDENTIFIER.type) {
+		while (this.#peek().type === TOKEN.IDENTIFIER.type || this.#peek().type === TOKEN.DOT.type) {
 			text += this.#advance().text;
 		}
 
@@ -1146,6 +1149,27 @@ export class Parser {
 	// ==========================
 	// MARK: - Helper Methods
 	// ==========================
+
+	// NOTE: For whatever reason, some Thrift examples are including some parenthesized items that are not documented in the IDL we're using as reference.
+	// Let's ignore them for the time being.
+	// These items look as follows: `(python.immutable = "")`
+	#oddParens() {
+		if (this.#peek().type !== TOKEN.LEFT_PAREN.type) {
+			return;
+		}
+
+		let start = this.#current;
+		let text = "";
+
+		while (this.#peek().type !== TOKEN.RIGHT_PAREN.type) {
+			text += this.#advance().text;
+		}
+
+		// Append closing parentheses
+		text += this.#advance().text;
+
+		console.warn(`WARNING: Extraneous parentheses has been found near token ${start}! Contents: >${text}<. These will be ignored for now.`);
+	}
 
 	/**
 	 * @param {import("./Tokens.js").tokenType[]} tokens
@@ -1207,7 +1231,7 @@ export class Parser {
 	 * @param {string} message
 	 */
 	#error(type, message) {
-		console.table(this.#tokens);
+		console.table(this.#tokens.slice(0, this.#current + 1));
 		throw new Error(`Unexpected token (${this.#current}): ${type}. ${message}`);
 	}
 

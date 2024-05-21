@@ -25,6 +25,7 @@ export class Scanner {
 		STRUCT: TOKEN.STRUCT,
 		THROWS: TOKEN.THROWS,
 		TYPEDEF: TOKEN.TYPEDEF,
+		UNION: TOKEN.UNION,
 
 		// Containers
 		LIST: TOKEN.LIST,
@@ -76,6 +77,8 @@ export class Scanner {
 			// Single-character tokens
 			case "(": this.#addToken("LEFT_PAREN"); break;
 			case ")": this.#addToken("RIGHT_PAREN"); break;
+			case "[": this.#addToken("LEFT_BRACKET"); break;
+			case "]": this.#addToken("RIGHT_BRACKET"); break;
 			case "{": this.#addToken("LEFT_BRACE"); break;
 			case "}": this.#addToken("RIGHT_BRACE"); break;
 			case "<": this.#addToken("LEFT_ANGLE_BRACE"); break;
