@@ -26,6 +26,7 @@ import { TOKEN } from "./Tokens.js";
  * [03] Include         ::=  'include' Literal
  *
  * @typedef {Object} Include
+ * @property {string} literal
  */
 
 /**
@@ -33,6 +34,7 @@ import { TOKEN } from "./Tokens.js";
  * [04] CppInclude      ::=  'cpp_include' Literal
  *
  * @typedef {Object} CppInclude
+ * @property {string} literal
  */
 
 /**
@@ -321,8 +323,12 @@ export class Parser {
 
 		switch (token.type) {
 			case TOKEN.INCLUDE.type:
-				// TODO: Parse INCLUDE type!
-				throw this.#error(token.type, `Header token ${token.type} not supported!`);
+				const include = this.#include();
+				return {
+					type: TOKEN.INCLUDE.type,
+					name: include.literal,
+					header: include
+				}
 
 			case TOKEN.CPP_INCLUDE.type:
 				// TODO: Parse CPP_INCLUDE type!
@@ -340,6 +346,34 @@ export class Parser {
 				console.error(`Token ${token.type} not supported!`);
 				throw this.#error(token.type, `Header token ${token.type} not supported!`);
 		}
+	}
+
+	/**
+	 * [03] Include         ::=  'include' Literal
+	 *
+	 * @returns {Include}
+	 */
+	#include() {
+		this.#consume(TOKEN.INCLUDE, "Incorrect include definition");
+		const literal = `${this.#advance().literal}`;
+
+		return {
+			literal
+		};
+	}
+
+	/**
+	 * [04] CppInclude      ::=  'cpp_include' Literal
+	 *
+	 * @returns {Include}
+	 */
+	#cppInclude() {
+		this.#consume(TOKEN.CPP_INCLUDE, "Incorrect include definition");
+		const literal = `${this.#advance().literal}`;
+
+		return {
+			literal
+		};
 	}
 
 	/**
