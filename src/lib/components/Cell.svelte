@@ -20,18 +20,20 @@
 	/** @type {string} */
 	let hint = "";
 
-	if (type === "i32" || type === "i64") {
-		// Since there's a chance we're interpreting an integer as a date,
-		// let's do a conversion to show it when hovering over this number
-		let timestamp = Number(value);
-		if (timestamp || timestamp === 0) {
-			hint = new Date(timestamp).toUTCString();
-		}
-	} else if (type === "str") {
-		// If this string is a number, we could also attempt to show the date
-		let timestamp = Number(value);
-		if (!isNaN(timestamp)) {
-			hint = new Date(timestamp).toUTCString();
+	$: {
+		if (type === "i32" || type === "i64") {
+			// Since there's a chance we're interpreting an integer as a date,
+			// let's do a conversion to show it when hovering over this number
+			let timestamp = Number(value);
+			if (timestamp || timestamp === 0) {
+				hint = new Date(timestamp).toUTCString();
+			}
+		} else if (type === "str") {
+			// If this string is a number, we could also attempt to show the date
+			let timestamp = Number(value);
+			if (!isNaN(timestamp)) {
+				hint = new Date(timestamp).toUTCString();
+			}
 		}
 	}
 
