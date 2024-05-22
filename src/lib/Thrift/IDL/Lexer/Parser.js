@@ -402,14 +402,16 @@ export class Parser {
 	 * @returns {NamespaceScope}
 	 */
 	#namespaceScope() {
-		const token = this.#advance();
-
-		switch (token.type) {
+		switch (this.#peek().type) {
 			case TOKEN.IDENTIFIER.type:
 				return this.#identifier();
 
+			case TOKEN.STAR.type:
+				return this.#advance().text ?? "*";
+
 			default:
-				return '*';
+				console.warn(`WARNING: Extraneous Namespace Scope found!`);
+				return "*";
 		}
 	}
 
@@ -1176,8 +1178,12 @@ export class Parser {
 	 */
 	#identifier() {
 		let text = "";
+		let matchers = [
+			TOKEN.IDENTIFIER.type,
+			TOKEN.DOT.type
+		];
 
-		while (this.#peek().type === TOKEN.IDENTIFIER.type || this.#peek().type === TOKEN.DOT.type) {
+		for (let i = 0; this.#peek().type === matchers[i%2]; i++) {
 			text += this.#advance().text;
 		}
 
