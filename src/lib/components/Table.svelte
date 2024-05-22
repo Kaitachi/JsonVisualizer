@@ -238,8 +238,8 @@
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th scope="row"
-							class="px-6 py-4">
-							{key}
+							class="px-6 py-4 bg-gray-900">
+							<em>{key}</em>
 						</th>
 						<td class="px-6 py-4"
 							data-type="{type}"
@@ -262,8 +262,8 @@
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th scope="row"
-							class="px-6 py-4 w-10">
-							{i}
+							class="px-6 py-4 w-10 bg-gray-900">
+							<em>{i}</em>
 						</th>
 						<td class="px-6 py-4"
 							data-key="{i}"
@@ -287,8 +287,8 @@
 
 					<tr class="bg-slate-400 bg-opacity-25 border-b dark:bg-neutral-900 dark:border-gray-700 dark:bg-opacity-25">
 						<th scope="row"
-							class="px-6 py-4 w-10">
-							{i}
+							class="px-6 py-4 w-10 bg-gray-900">
+							<em>{i}</em>
 						</th>
 						<td class="px-6 py-4"
 							data-key="{i}"
