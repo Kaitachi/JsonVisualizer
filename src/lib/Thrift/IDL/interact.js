@@ -31,7 +31,6 @@ export function getThriftStructForMethod(service, method, messageType) {
 				f.push(...signature.throws);
 			}
 
-			console.warn({f});
 			return f;
 	}
 

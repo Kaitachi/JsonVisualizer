@@ -36,12 +36,11 @@ export const service = derived([selectedService, document], ([$selectedService, 
 
 	const matchingService = services.find(svc => svc.name === $selectedService);
 
-	// FIXME: Is there any way to correctly filter mixed arrays on jsdoc?
 	// TODO: Provide options to select service when multiple services are available!
 	if (matchingService) {
-		thisService = matchingService.definition;
+		thisService = /** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service} */ (matchingService.definition);
 	} else {
-		thisService = services[0].definition;
+		thisService = /** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service} */ (services[0].definition);
 	}
 
 	return thisService;

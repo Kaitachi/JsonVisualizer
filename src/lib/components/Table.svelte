@@ -58,64 +58,71 @@
 	/**
 	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
 	 * @param {string} index
+	 * @returns {import("$lib/Thrift/IDL/Lexer/Parser").Field|undefined}
+	 */
+	function definitionField(fields, index) {
+		if (!fields || !fields.length) {
+			return undefined;
+		}
+
+		return fields
+				.find(field => field.id === +index);
+	}
+
+	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
+	 * @param {string} index
+	 * @returns {import("$lib/Thrift/IDL/Lexer/Parser").FieldType|undefined}
+	 */
+	function definitionStruct(fields, index) {
+		const field = definitionField(fields, index)?.type
+
+		if (typeof field !== "string") {
+			return "";
+		}
+		
+		const thrift_data_type = THRIFT.DATA_TYPES[field.toLowerCase()];
+
+		if ((thrift_data_type && !thrift_data_type.is_container) || ["string", "double"].includes(field.toLowerCase())) {
+			return "";
+		}
+
+		return ` - ${field}`;
+	}
+
+	/**
+	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
+	 * @param {string} index
 	 * @returns {string}
 	 */
 	function definitionName(fields, index) {
-		if (!fields || !fields.length) {
-			return "";
-		}
+		const field = definitionField(fields, index);
 
-		let field = fields
-				.find(field => field.id === +index)
-				?.identifier;
-
-		return (field) ? `: ${field}` : "";
+		return (field) ? `: ${field?.identifier}` : "";
 	}
 
 	/**
-	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
-	 * @param {string} index
-	 * @param {string} cell_type
+	 * @param {string?} field
+	 * @param {string} type
 	 * @returns {string}
 	 */
-	function definitionType(fields, index, cell_type) {
-		if (!cell_type || !THRIFT.DATA_TYPES[cell_type].is_container) {
-			// Ignore primitives
+	function structType(field, type = "value") {
+		if (!field) {
 			return "";
 		}
 
-		let t = definitionStruct(fields, index);
-
-		switch (cell_type.toLowerCase()) {
-			case "set":
-				return (t) ? ` - type Set<${t.valueType}>` : "";
-
-			case "lst":
-				return (t) ? ` - type List<${t.valueType}>` : "";
-
-			case "map":
-				return (t) ? ` - type Map<${t.keyType},${t.valueType}>` : "";
-
-			default: // record type
-				return (t) ? ` - type ${t}` : "";
+		if (typeof field === "object") {
+			// TODO: Resolve nested containers!
+			field = `${field[`${type}Type`]}`;
 		}
-	}
 
-	/**
-	 * @param {import("$lib/Thrift/IDL/Lexer/Parser").Field[]} fields
-	 * @param {string} index
-	 * @returns {any}
-	 */
-	function definitionStruct(fields, index) {
-		if (!fields || !fields.length) {
+		const thrift_data_type = THRIFT.DATA_TYPES[field.toLowerCase()];
+
+		if ((thrift_data_type && !thrift_data_type.is_container) || ["string", "double"].includes(field.toLowerCase())) {
 			return "";
 		}
 
-		let t = fields
-				.find(field => field.id === +index)
-				?.type;
-
-		return t;
+		return ` - ${field}`;
 	}
 </script>
 
@@ -137,15 +144,16 @@
 						{@const cell_type = Object.keys(column[1])[0]}
 						{@const subpath = `${jsonPath}[${column[0]}]`}
 						{@const cell_type_name = THRIFT.DATA_TYPES[cell_type].name}
-						{@const definition_type = definitionType(fields, column[0], cell_type)}
+						{@const definition_name = definitionName(fields, column[0])}
+						{@const definition_struct = definitionStruct(fields, column[0])}
 
 
 						<th scope="col"
 							class="px-6 py-3"
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
-							{column[0]}{definitionName(fields, column[0])}
-							<em>({cell_type_name}{definition_type})</em>
+							{column[0]}{definition_name}
+							<em>({cell_type_name}{definition_struct})</em>
 						</th>
 					{/each}
 				{:else if type === "map"}
@@ -153,23 +161,24 @@
 					{@const map_value_type = obj[1]}
 					{@const map_count = obj[2]}
 					{@const subpath = `${jsonPath}...`}
-					{@const definition_struct = (struct) ? ` - type ${struct}` : ``}
+					{@const key_type = structType(struct, "key")}
+					{@const value_type = structType(struct)}
 
 					<th scope="col"
 						class="px-6 py-3"
 						data-type="{map_key_type}">
-						Key <em>({THRIFT.DATA_TYPES[map_key_type].name})</em>
+						Key <em>({THRIFT.DATA_TYPES[map_key_type].name}{key_type})</em>
 					</th>
 					<th scope="col"
 						class="px-6 py-3"
 						data-type="{map_value_type}"
 						data-json-path="{subpath}">
-						Value <em>({THRIFT.DATA_TYPES[map_value_type].name}{definition_struct})
+						Value <em>({THRIFT.DATA_TYPES[map_value_type].name}{value_type})
 					</th>
 				{:else if type === "lst"}
 					{@const lst_type = obj[0]}
 					{@const subpath = `${jsonPath}...`}
-					{@const definition_struct = (struct) ? ` - type ${struct}` : ``}
+					{@const value_type = structType(struct)}
 
 					<th scope="col"
 						class="px-6 py-3">
@@ -179,12 +188,12 @@
 						class="px-6 py-3"
 						data-type="{lst_type}"
 						data-json-path="{subpath}">
-						Items <em>({THRIFT.DATA_TYPES[obj[0]].name}{definition_struct})</em>
+						Items <em>({THRIFT.DATA_TYPES[obj[0]].name}{value_type})</em>
 					</th>
 				{:else if type === "set"}
 					{@const set_type = obj[0]}
 					{@const subpath = `${jsonPath}...`}
-					{@const definition_struct = (struct) ? ` - type ${struct}` : ``}
+					{@const value_type = structType(struct)}
 
 					<th scope="col"
 						class="px-6 py-3">
@@ -194,7 +203,7 @@
 						class="px-6 py-3"
 						data-type="{set_type}"
 						data-json-path="{subpath}">
-						Elements <em>({THRIFT.DATA_TYPES[obj[0]].name}{definition_struct})</em>
+						Elements <em>({THRIFT.DATA_TYPES[obj[0]].name}{value_type})</em>
 					</th>
 				{:else}
 					<th scope="col"
@@ -212,14 +221,13 @@
 						{@const cell_type = entry[0]}
 						{@const value = entry[1]}
 						{@const subpath = `${jsonPath}[${field[0]}]['${cell_type}']`}
-						{@const definition_struct = definitionStruct(fields, field[0])}
-						{@const sub_struct = (typeof definition_struct === "object") ? definition_struct.valueType : null}
+						{@const definition_struct = definitionField(fields, field[0])?.type}
 
 						<td class="px-6 py-4"
 							data-type="{cell_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[cell_type].is_container}
-								<svelte:self obj={value} jsonPath={subpath} type={cell_type} struct={sub_struct || definition_struct} />
+								<svelte:self obj={value} jsonPath={subpath} type={cell_type} struct={definition_struct} />
 							{:else}
 								<Cell entry={entry} path={subpath} />
 							{/if}
@@ -245,7 +253,7 @@
 							data-type="{type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[obj[1]].is_container}
-								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} struct={struct} />
+								<svelte:self obj={entry} jsonPath={subpath} type={map_entry_type} struct={struct?.valueType || struct} />
 							{:else}
 								<Cell entry={[map_entry_type, entry]} path={subpath} />
 							{/if}
@@ -270,7 +278,7 @@
 							data-type="{lst_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[lst_type].is_container}
-								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} struct={struct} />
+								<svelte:self obj={entry} jsonPath={subpath} type={lst_type} struct={struct?.valueType || struct} />
 							{:else}
 								<Cell entry={[lst_type, entry]} path={subpath} />
 							{/if}
@@ -295,7 +303,7 @@
 							data-type="{set_type}"
 							data-json-path="{subpath}">
 							{#if THRIFT.DATA_TYPES[set_type].is_container}
-								<svelte:self obj={entry} jsonPath={subpath} type={set_type} struct={struct} />
+								<svelte:self obj={entry} jsonPath={subpath} type={set_type} struct={struct?.valueType || struct} />
 							{:else}
 								<Cell entry={[set_type, entry]} path={subpath} />
 							{/if}
