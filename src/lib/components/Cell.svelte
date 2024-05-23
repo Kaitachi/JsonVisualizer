@@ -22,7 +22,7 @@
 
 	$: {
 		if (type === "i32" || type === "i64") {
-			// Since there's a chance we're interpreting an integer as a date,
+			// Since there's a chance we're interpreting an integer/long as a date,
 			// let's do a conversion to show it when hovering over this number
 			let timestamp = Number(value);
 			if (timestamp || timestamp === 0) {
@@ -31,7 +31,7 @@
 		} else if (type === "str") {
 			// If this string is a number, we could also attempt to show the date
 			let timestamp = Number(value);
-			if (!isNaN(timestamp)) {
+			if (value !== "" && !isNaN(timestamp)) {
 				hint = new Date(timestamp).toUTCString();
 			}
 		}

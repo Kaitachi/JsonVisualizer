@@ -52,7 +52,11 @@
 	</form>
 {:else}
 	<div on:click={edit} role="textbox" tabindex="0">
+	{#if value !== ""}
 		{value}
+	{:else}
+		<em class="text-gray-600">empty</em>
+	{/if}
 	</div>
 {/if}
 
