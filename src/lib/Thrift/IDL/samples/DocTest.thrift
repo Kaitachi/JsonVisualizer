@@ -165,6 +165,8 @@ service ThriftTest
   map<UserId, map<Numberz,Insanity>> testInsanity(1: Insanity argument),
 
   map<UserId, map<Numberz,Insanity>> testInsanity2(1: Insanity2 argument),
+
+  list<list<Xtruct>> testXtructListList(1: list<list<Xtruct>> listlist);
 }
 
 /// This style of Doxy-comment doesn't work.

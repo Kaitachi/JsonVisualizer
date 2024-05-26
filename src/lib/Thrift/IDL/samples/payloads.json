@@ -58,8 +58,8 @@
 			},
 			{
 				"name": "sample_10_testMap",
-				"request": [1,"testNest",1,1,{"1":{"map":["i32","i32",4,{"11":12,"22":23,"33":34,"44":45}]}}],
-				"response": [1,"testNest",2,1,{"0":{"map":["i32","i32",4,{"12":13,"23":24,"34":35,"45":46}]}}]
+				"request": [1,"testMap",1,1,{"1":{"map":["i32","i32",4,{"11":12,"22":23,"33":34,"44":45}]}}],
+				"response": [1,"testMap",2,1,{"0":{"map":["i32","i32",4,{"12":13,"23":24,"34":35,"45":46}]}}]
 			},
 			{
 				"name": "sample_11_testSet",
@@ -106,6 +106,15 @@
 						}
 					}
 				}],
+				"response": [1,"testInsanity2",2,1,{}]
+			},
+			{
+				"name": "sample_18_testXtructListList",
+				"request": [1,"testXtructListList",1,1,{
+					"1":{"lst":["lst",1,
+						["rec",2,{"1":{"str":"my request struct 1"},"4":{"i8":4},"9":{"i32":999},"11":{"i64":1111}},{"1":{"str":"my request struct 2"},"4":{"i8":5},"9":{"i32":1000},"11":{"i64":1112}}]
+					]
+				}}],
 				"response": [1,"testInsanity2",2,1,{}]
 			}
 		]
