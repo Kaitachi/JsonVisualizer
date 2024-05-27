@@ -1,7 +1,8 @@
 <script>
 	import ThriftObjectDisplay from '$components/ThriftObjectDisplay.svelte';
 	import { json } from '../stores';
-	import { source, document, service } from '$lib/Thrift/IDL/stores.js';
+	import { document, service } from '$lib/Thrift/IDL/stores.js';
+	import DefinitionTab from '$components/Thrift/DefinitionTab.svelte';
 
 	let activeTab = "Message";
 
@@ -85,22 +86,7 @@
 			<ThriftObjectDisplay json={$json} />
 		{/if}
 	{:else if activeTab === "Definition"}
-		<form class="my-6">
-			<fieldset>
-				<div class="flex flex-col text-sm mb-2">
-					<label for="source" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
-					<textarea bind:value={$source} name="source" rows="12"
-						class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
-					></textarea>
-				</div>
-			</fieldset>
-		</form>
-
-		<hr>
-
-		<div class="mt-3 dark:text-gray-400">
-			Definition Table Display coming soon&trade;!
-		</div>
+		<DefinitionTab />
 	{:else if activeTab === "Debug"}
 		<div class="my-6 dark:text-gray-400">
 			document: {JSON.stringify($document)}

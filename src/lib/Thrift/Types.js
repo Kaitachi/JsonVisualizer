@@ -1,6 +1,6 @@
 /**
  * Thrift Message that can be transmitted across services
- * @typedef {Array<[number, string, number, number, Object]>} ThriftMessage
+ * @typedef {[number, string, number, number, Object]} ThriftMessage
  */
 
 

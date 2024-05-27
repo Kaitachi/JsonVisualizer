@@ -1,7 +1,6 @@
 import { writable, derived } from "svelte/store";
 import { service as selectedService } from "../../../stores.js";
-import { load, loadCK } from "./main.js";
-import { TOKEN } from "./Lexer/Tokens.js";
+import { loadCK } from "./main.js";
 import { enableDebug } from "./debug.js";
 import { dev } from "$app/environment";
 
@@ -23,6 +22,8 @@ export const document = derived(source, ($source) => {
 	return src;
 });
 
+
+/** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").ServiceDefinition?>} */
 export const service = derived([selectedService, document], ([$selectedService, $document]) => {
 	if (!$document) {
 		return null;
