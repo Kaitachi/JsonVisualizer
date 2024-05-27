@@ -14,7 +14,8 @@ const config = {
 		}),
 
 		alias: {
-			"$components": "./src/lib/components"
+			"$components": "./src/lib/components",
+			"$static": "./static"
 		},
 
 		paths: {

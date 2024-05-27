@@ -1,7 +1,7 @@
 import { json } from "../../../stores.js";
 import { source } from "./stores.js";
 import debug_list from "./samples/payloads.json";
-import debug_source from "./samples/sample.thrift?raw";
+import debug_source from "$static/thrift/services/sample.thrift?raw";
 
 
 export const debug_file = "DocTest.thrift";
