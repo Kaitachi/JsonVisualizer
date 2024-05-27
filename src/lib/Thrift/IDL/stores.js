@@ -1,6 +1,6 @@
 import { writable, derived } from "svelte/store";
 import { service as selectedService } from "../../../stores.js";
-import { load } from "./main.js";
+import { load, loadCK } from "./main.js";
 import { TOKEN } from "./Lexer/Tokens.js";
 import { enableDebug } from "./debug.js";
 import { dev } from "$app/environment";
@@ -13,7 +13,14 @@ export const document = derived(source, ($source) => {
 		return null;
 	}
 
-	return load($source);
+	let src = loadCK($source);
+
+	if (src.type === "ThriftErrors") {
+		// TODO: Properly handle Thrift errors!
+		return null;
+	}
+
+	return src;
 });
 
 export const service = derived([selectedService, document], ([$selectedService, $document]) => {
@@ -21,29 +28,20 @@ export const service = derived([selectedService, document], ([$selectedService, 
 		return null;
 	}
 
-	let definitions = Object.values($document.definitions);
+	let services = /** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */ ($document.body.filter(item => item.type === "ServiceDefinition"));
 
-	let services = definitions
-		.filter(def => def.type === TOKEN.SERVICE.type);
-
-	if (!services || !services.length) {
+	if (!services.length) {
 		console.warn("No services found in current Thrift definition!");
 		return null;
 	}
 
-	/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} */
-	let thisService = null;
+	let matchingService = services.find(svc => svc.name.value === $selectedService);
 
-	const matchingService = services.find(svc => svc.name === $selectedService);
-
-	// TODO: Provide options to select service when multiple services are available!
 	if (matchingService) {
-		thisService = /** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service} */ (matchingService.definition);
+		return matchingService;
 	} else {
-		thisService = /** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Service} */ (services[0].definition);
+		return services[0];
 	}
-
-	return thisService;
 });
 
 

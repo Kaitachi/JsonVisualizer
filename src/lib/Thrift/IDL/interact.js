@@ -1,53 +1,79 @@
+import { get } from "svelte/store";
 import { THRIFT } from "../Types.js";
+import { document, service } from "./stores.js";
+
 
 /**
- * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Service?} service
- * @param {string?} method
- * @param {number?} messageType
- * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
- */
-export function getThriftStructForMethod(service, method, messageType) {
-	if (!method || !messageType) {
-		return [];
-	}
-
-	const signature = service?.functions[method];
-
-	if (!signature) { return []; }
-
-	switch (messageType) {
-		case THRIFT.MESSAGE.REQUEST:
-			return signature.fields ?? [];
-
-		case THRIFT.MESSAGE.RESPONSE:
-			// Add return object with id of 0
-			const returns = signature.returns ?? "UNDEFINED?";
-
-			/** @type {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]} */
-			let f = [{ id: 0, requiredness: null, type: returns, identifier: `response for ${method} method`, value: null }];
-
-			// Add fields found in throws section of signature
-			if (signature.throws) {
-				f.push(...signature.throws);
-			}
-
-			return f;
-	}
-
-	return [];
-}
-
-/**
- * @param {import("$lib/Thrift/IDL/Lexer/Parser.js").Document?} document
  * @param {string?} name
- * @returns {import("$lib/Thrift/IDL/Lexer/Parser.js").Field[]}
+ * @param {number?} messageType
+ * @returns {import("@creditkarma/thrift-parser").FieldDefinition[]}
  */
-export function getThriftStruct(document, name) {
+export function getThriftStruct(name, messageType = null) {
 	if (!name) {
 		return [];
 	}
 
-	// FIXME: Validate this object is a Struct, perhaps?
-	return document?.definitions[name]?.definition?.fields;
+	if (messageType) {
+		return getFieldsFromService(name, messageType);
+	} else {
+		return getFieldsFromStruct(name);
+	}
 }
+
+
+/**
+ * @param {string} methodName
+ * @param {number} messageType
+ * @returns {import("@creditkarma/thrift-parser").FieldDefinition[]}
+ */
+function getFieldsFromService(methodName, messageType) {
+	let currentService = get(service);
+
+	if (!currentService) {
+		return [];
+	}
+
+	let signature = currentService.functions.find(svc => svc.name.value === methodName);
+	console.warn(`>>> getFieldsFromService(${methodName}, ${messageType}) signature: ${JSON.stringify(signature)}`);
+
+	if (!signature) {
+		return [];
+	}
+
+	switch (messageType) {
+		case THRIFT.MESSAGE.REQUEST:
+		default:
+			return signature.fields;
+
+		case THRIFT.MESSAGE.RESPONSE:
+			let returns = signature.returnType;
+
+			// TODO: Return fields from response type!
+			return [];
+	}
+}
+
+/**
+ * @param {string} structName
+ * @returns {import("@creditkarma/thrift-parser").FieldDefinition[]}
+ */
+function getFieldsFromStruct(structName) {
+	let currentDocument = get(document);
+
+	if (!currentDocument) {
+		return [];
+	}
+
+	let struct = /** @type {import("@creditkarma/thrift-parser").StructDefinition} */ (currentDocument.body
+		.find(item => item.type === "StructDefinition" && item.name.value.toLowerCase() === structName.toLowerCase()));
+
+	if (!struct) {
+		return [];
+	}
+
+	return struct.fields;
+}
+
+
+
 

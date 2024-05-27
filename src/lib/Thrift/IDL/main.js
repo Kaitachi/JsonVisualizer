@@ -1,3 +1,4 @@
+import { parse } from '@creditkarma/thrift-parser'
 import { Scanner } from "./Lexer/Scanner.js";
 import { Parser } from "./Lexer/Parser.js";
 
@@ -16,6 +17,19 @@ export function load(source) {
 	const tree = parser.parse();
 
 	console.info("DONE PARSE");
+
+	console.info({tree});
+
+	return tree;
+}
+
+/**
+ * Transform given source string to JSON-ified Thrift service.
+ * @param {string} source - source file to be parsed
+ * @returns {import('@creditkarma/thrift-parser').ThriftDocument | import('@creditkarma/thrift-parser').ThriftErrors} JSON object with Service definition
+ */
+export function loadCK(source) {
+	const tree = parse(source);
 
 	console.info({tree});
 

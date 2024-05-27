@@ -41,8 +41,6 @@ namespace st ThriftTest
 namespace noexist ThriftTest
 namespace cpp.noexist ThriftTest
 
-namespace * thrift.test
-
 /**
  * Docstring!
  */
