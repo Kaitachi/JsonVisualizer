@@ -55,6 +55,21 @@ export const THRIFT = {
 		"lst": { name: "list", is_container: true, is_unquoted: true },
 		"map": { name: "map", is_container: true, is_unquoted: true },
 		"set": { name: "set", is_container: true, is_unquoted: true }
+	},
+
+	/** @type {Object.<string, string>} */
+	CK_TYPES: {
+		"TFKeyword": "tf",
+		"I8Keyword": "i8",
+		"I16Keyword": "i16",
+		"I32Keyword": "i32",
+		"I64Keyword": "i64",
+		"DoubleKeyword": "dbl",
+		"StringKeyword": "str",
+		"RecordKeyword": "rec",
+		"ListType": "lst",
+		"MapType": "map",
+		"SetType": "set",
 	}
 }
 

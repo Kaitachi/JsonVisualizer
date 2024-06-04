@@ -5,7 +5,7 @@ import debug_source from "$static/thrift/services/sample.thrift?raw";
 
 
 export const debug_file = "DocTest.thrift";
-export const debug_sample = "sample_16";
+export const debug_sample = "sample_17";
 export const debug_type = "request";
 
 

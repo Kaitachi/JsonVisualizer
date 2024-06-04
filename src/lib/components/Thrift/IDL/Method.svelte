@@ -26,7 +26,7 @@
 				<ul class="divide-y divide-white/5">
 					{#each method.fields as field}
 						<li class="">
-							<Field field={field} />
+							<Field data={field} />
 						</li>
 					{/each}
 				</ul>
@@ -48,7 +48,7 @@
 				<ul class="divide-y divide-white/5">
 					{#each method.throws as field}
 						<li class="">
-							<Field field={field} />
+							<Field data={field} />
 						</li>
 					{/each}
 				</ul>

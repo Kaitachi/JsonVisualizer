@@ -103,6 +103,15 @@ struct Insanity
   2: list<Xtruct> xtructs
 } (python.immutable= "")
 
+struct Insanity2
+{
+  1: map<Numberz, UserId> userMap,
+  2: list<Xtruct> xtructs_lst
+  3: set<Xtruct> xtructs_set
+  4: Xtruct xtructs_rec
+  5: map<i32, Xtruct> xtructs_map
+}
+
 struct CrazyNesting {
   1: string string_field,
   2: optional set<Insanity> set_field,
@@ -280,6 +289,19 @@ service ThriftTest
    * @return map<UserId, map<Numberz,Insanity>> - a map with the above values
    */
   map<UserId, map<Numberz,Insanity>> testInsanity(1: Insanity argument),
+
+  /**
+   * So you think you've got this all worked out, eh?
+   *
+   * Creates a map with these values and prints it out:
+   *   { 1 => { 2 => argument,
+   *            3 => argument,
+   *          },
+   *     2 => { 6 => <empty Insanity struct>, },
+   *   }
+   * @return map<UserId, map<Numberz,Insanity>> - a map with the above values
+   */
+  map<UserId, map<Numberz,Insanity>> testInsanity2(1: Insanity2 argument),
 
   /**
    * Prints 'testMulti()'
