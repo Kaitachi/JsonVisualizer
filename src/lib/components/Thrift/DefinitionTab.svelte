@@ -16,9 +16,9 @@
 			></textarea>
 		</div>
 		<div class="bg-jimmy-lite-100 dark:bg-jimmy-night-700 shadow-lg p-6 rounded-lg">
-			<summary class="text-sm leading-6 text-slate-900 dark:text-gray-100 font-semibold select-none">
+			<div class="text-sm leading-6 text-slate-900 dark:text-gray-100 font-semibold select-none">
 				Document Options
-			</summary>
+			</div>
 			<div class="mt-3 text-sm leading-6 text-slate-600 dark:text-gray-100">
 				<dl class="divide-y divide-gray-100">
 					<div class="px-4 py-6 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-0">
