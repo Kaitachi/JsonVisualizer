@@ -3,9 +3,14 @@
 	import { document, source } from "$lib/Thrift/IDL/stores.js";
 	import Service from "./IDL/Service.svelte";
 
-
-	let available_services = /** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */ 
+	/** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */
+	let available_services = [];
+	
+	$: {
+		available_services = /** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */ 
 							($document?.body.filter(item => item.type === "ServiceDefinition"));
+	}
+
 </script>
 <form class="my-6">
 	<fieldset>
@@ -25,9 +30,13 @@
 						<dt class="text-sm font-medium leading-6"><label for="selectedService">Selected Service</label></dt>
 						<dd class="mt-1 text-sm leading-6 text-gray-500 sm:col-span-5 sm:mt-0 font-normal dark:text-gray-400">
 							<select id="selectedService" bind:value={$selectedService} class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-								{#each available_services as svc}
-									<option selected={$selectedService === svc.name.value}>{svc.name.value}</option>
-								{/each}
+								{#if available_services}
+									{#each available_services as svc}
+										<option selected={$selectedService === svc.name.value}>{svc.name.value}</option>
+									{/each}
+								{:else}
+									<option disabled>No services available</option>
+								{/if}
 							</select>
 						</dd>
 					</div>
