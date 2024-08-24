@@ -29,7 +29,8 @@ export const service = derived([selectedService, document], ([$selectedService, 
 		return null;
 	}
 
-	let services = /** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */ ($document.body.filter(item => item.type === "ServiceDefinition"));
+	let services = /** @type {import("@creditkarma/thrift-parser").ServiceDefinition[]} */
+		($document.body.filter(item => item.type === "ServiceDefinition"));
 
 	if (!services.length) {
 		console.warn("No services found in current Thrift definition!");
@@ -43,6 +44,45 @@ export const service = derived([selectedService, document], ([$selectedService, 
 	} else {
 		return services[0];
 	}
+});
+
+
+/** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").EnumDefinition[]?>} */
+export const enums = derived([document], ([$document]) => {
+	if (!document) {
+		return null;
+	}
+
+	let enums = /** @type {import("@creditkarma/thrift-parser").EnumDefinition[]} */
+		($document.body.filter(item => item.type === "EnumDefinition"));
+
+	return enums;
+});
+
+
+/** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").ExceptionDefinition[]?>} */
+export const exceptions = derived([document], ([$document]) => {
+	if (!document) {
+		return null;
+	}
+
+	let exceptions = /** @type {import("@creditkarma/thrift-parser").ExceptionDefinition[]} */
+		($document.body.filter(item => item.type === "ExceptionDefinition"));
+
+	return exceptions;
+});
+
+
+/** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").StructDefinition[]?>} */
+export const structs = derived([document], ([$document]) => {
+	if (!document) {
+		return null;
+	}
+
+	let structs = /** @type {import("@creditkarma/thrift-parser").StructDefinition[]} */
+		($document.body.filter(item => item.type === "StructDefinition"));
+
+	return structs;
 });
 
 
