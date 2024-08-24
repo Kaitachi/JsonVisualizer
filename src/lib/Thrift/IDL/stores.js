@@ -49,7 +49,7 @@ export const service = derived([selectedService, document], ([$selectedService, 
 
 /** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").EnumDefinition[]?>} */
 export const enums = derived([document], ([$document]) => {
-	if (!document) {
+	if (!$document) {
 		return null;
 	}
 
@@ -62,7 +62,7 @@ export const enums = derived([document], ([$document]) => {
 
 /** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").ExceptionDefinition[]?>} */
 export const exceptions = derived([document], ([$document]) => {
-	if (!document) {
+	if (!$document) {
 		return null;
 	}
 
@@ -75,7 +75,7 @@ export const exceptions = derived([document], ([$document]) => {
 
 /** @type {import("svelte/store").Readable<import("@creditkarma/thrift-parser").StructDefinition[]?>} */
 export const structs = derived([document], ([$document]) => {
-	if (!document) {
+	if (!$document) {
 		return null;
 	}
 
