@@ -57,9 +57,6 @@
 	 * @returns {import("@creditkarma/thrift-parser").FieldDefinition | undefined}
 	 */
 	function getStruct(i) {
-		console.warn(`> getStruct(${i}): [struct ${struct}]`);
-		console.warn({fields});
-
 		if (!struct || !fields) {
 			return undefined;
 		}

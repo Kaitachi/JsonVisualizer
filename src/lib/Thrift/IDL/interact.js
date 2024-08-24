@@ -34,7 +34,6 @@ function getFieldsFromService(methodName, messageType) {
 	}
 
 	let signature = currentService.functions.find(svc => svc.name.value === methodName);
-	console.warn(`>>> getFieldsFromService(${methodName}, ${messageType}) signature: ${JSON.stringify(signature)}`);
 
 	if (!signature) {
 		return [];
