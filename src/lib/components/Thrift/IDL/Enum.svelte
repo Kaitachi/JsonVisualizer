@@ -30,11 +30,15 @@
 		<div class="gap-2 border-y border-b-white/7.5 border-t-transparent bg-white/2.5 p-4 dark:border-b-white/5 dark:bg-white/2.5">
 			<h2 class="font-semibold">Values</h2>
 			<ul class="divide-y divide-white/5">
-				{#each definition.members as member}
-					<li class="">
-						[{increment(member.initializer?.value.value)}] <code>{member.name.value}</code>
-					</li>
-				{/each}
+				{#if definition.members.length}
+					{#each definition.members as member}
+						<li class="">
+							[{increment(member.initializer?.value.value)}] <code>{member.name.value}</code>
+						</li>
+					{/each}
+				{:else}
+					<em>No values defined in this enumeration!</em>
+				{/if}
 			</ul>
 		</div>
 	</div>

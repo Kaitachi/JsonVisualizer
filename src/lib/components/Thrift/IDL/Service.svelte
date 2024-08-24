@@ -15,6 +15,7 @@
 
 <div class="grid grid-cols-3 items-start gap-4 px-0 py-6">
 	<div class="col-span-2 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+		<h3>METHODS</h3>
 		{#each methods as method}
 			<Method {method} />
 		{/each}
@@ -26,6 +27,8 @@
 				{#each $enums as item}
 					<Enum definition={item} />
 				{/each}
+			{:else}
+				<em>No enums defined.</em>
 			{/if}
 		</div>
 		<div>
@@ -34,6 +37,8 @@
 				{#each $exceptions as item}
 					<Exception exception={item} />
 				{/each} 
+			{:else}
+				<em>No exceptions defined.</em>
 			{/if}
 		</div>
 		<div>
@@ -42,7 +47,31 @@
 				{#each $structs as item}
 					<Struct struct={item} />
 				{/each}
+			{:else}
+				<em>No structs defined.</em>
 			{/if}
 		</div>
 	</div>
 </div>
+
+<style>
+/* Add horizontal line to headers */
+h3 {
+ overflow: hidden;
+}
+
+h3:after {
+ background-color: darkorange;
+ content: "";
+ display: inline-block;
+ height: 2px;
+ position: relative;
+ vertical-align: middle;
+ width: 100%;
+}
+
+h3:after {
+ left: 0.5em;
+ margin-right: -50%;
+}
+</style>

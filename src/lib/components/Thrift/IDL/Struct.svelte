@@ -19,11 +19,15 @@
 		<div class="gap-2 border-y border-b-white/7.5 border-t-transparent bg-white/2.5 p-4 dark:border-b-white/5 dark:bg-white/2.5">
 			<h2 class="font-semibold">Fields</h2>
 			<ul class="divide-y divide-white/5">
-				{#each struct.fields as field}
-					<li class="">
-						<Field data={field} />
-					</li>
-				{/each}
+				{#if struct.fields.length}
+					{#each struct.fields as field}
+						<li class="">
+							<Field data={field} />
+						</li>
+					{/each}
+				{:else}
+					<em>No fields defined in this struct!</em>
+				{/if}
 			</ul>
 		</div>
 	</div>
