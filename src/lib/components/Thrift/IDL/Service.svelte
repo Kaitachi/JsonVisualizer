@@ -36,7 +36,7 @@
 	<div class="sticky top-10">
 		<div>
 			<h3 class="overflow-hidden">ENUMS</h3>
-			{#if displayEnums}
+			{#if displayEnums.length}
 				{#each displayEnums as item}
 					<Enum definition={item} />
 				{/each}
@@ -46,7 +46,7 @@
 		</div>
 		<div>
 			<h3 class="overflow-hidden mt-14">EXCEPTIONS</h3>
-			{#if displayExceptions}
+			{#if displayExceptions.length}
 				{#each displayExceptions as item}
 					<Exception exception={item} />
 				{/each} 
@@ -56,7 +56,7 @@
 		</div>
 		<div>
 			<h3 class="overflow-hidden mt-14">STRUCTS</h3>
-			{#if displayStructs}
+			{#if displayStructs.length}
 				{#each displayStructs as item}
 					<Struct struct={item} />
 				{/each}
