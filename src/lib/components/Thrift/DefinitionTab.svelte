@@ -18,6 +18,7 @@
 			<label for="source" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Thrift Definition File</label>
 			<textarea bind:value={$source} name="source" rows="12"
 				class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
+				placeholder="Paste Thrift File Contents Here!"
 			></textarea>
 		</div>
 		<div class="bg-jimmy-lite-100 dark:bg-jimmy-night-700 shadow-lg p-6 rounded-lg">

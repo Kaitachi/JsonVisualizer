@@ -44,6 +44,7 @@
 					<label for="json" class="font-bold mb-2 text-gray-800 dark:text-gray-100">Message</label>
 					<textarea bind:value={$json} name="json" rows="8"
 						class="appearance-none border border-gray-200 p-2 focus:outline-none focus:border-gray-500 shadow-lg rounded-lg"
+						placeholder="Paste Thrift Message Payload Here!"
 					></textarea>
 				</div>
 			</fieldset>
